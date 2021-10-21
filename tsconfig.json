@@ -1,0 +1,20 @@
+{
+  "extends": "./node_modules/gts/tsconfig-google.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "build",
+    "allowSyntheticDefaultImports": true,
+    "noImplicitOverride": true,
+    "strict": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "lib": [
+      "es2020"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ]
+}

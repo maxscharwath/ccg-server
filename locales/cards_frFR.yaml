@@ -1,0 +1,12 @@
+info:
+  locale: fr_FR
+  name: Français
+  version: 1
+
+cards:
+  0x0001:
+    name: Roi Krush
+    text: Charge
+  0x0002:
+    name: La pièce
+    text: Vous gagnez 1 cristal de mana pour ce tour uniquement

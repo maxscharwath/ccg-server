@@ -1,0 +1,12 @@
+info:
+  locale: en_US
+  name: American English
+  version: 1
+
+cards:
+  0x0001:
+    name: King Krush
+    text: Charge
+  0x0002:
+    name: The Coin Card
+    text: Gain 1 Mana Crystal this turn only.
