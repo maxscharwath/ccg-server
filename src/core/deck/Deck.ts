@@ -1,5 +1,9 @@
-import Card, {CardRarity} from './Card';
+import Card, {CardRarity} from '@core/cards/Card';
 
+/**
+ * Class Deck represent a Stack of Cards
+ * @see Card
+ */
 export default class Deck {
   static #MAX_CARDS = 30;
   #cards: Card[] = [];

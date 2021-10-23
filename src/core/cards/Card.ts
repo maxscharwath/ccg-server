@@ -1,12 +1,17 @@
+export type CardId = number;
 export enum CardRarity {
   COMMON,
   RARE,
   EPIC,
   LEGENDARY,
 }
+
+/**
+ * Class Card represent the base of all cards
+ */
 export default abstract class Card {
   public readonly type: string = 'card';
-  abstract id: number;
+  abstract id: CardId;
   abstract name: string;
   abstract text: string;
 

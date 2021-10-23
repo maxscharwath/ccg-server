@@ -1,16 +1,17 @@
 import * as fg from 'fast-glob';
-import Card from './Card';
 import * as path from 'path';
+import Card from '@core/cards/Card';
 
 export default class CardManager {
   private readonly cards = new Map<number, Readonly<Card>>();
   private loaded = false;
+
   public async load() {
     const files = await fg('**/*.(ts|js)', {
-      cwd: path.join(process.cwd(), "src/cards"),
-      absolute: true
+      cwd: path.join(process.cwd(), 'src/data/cards'),
+      absolute: true,
     });
-    const result= await Promise.allSettled(
+    const result = await Promise.allSettled(
       files.map(async file => {
         const exports = await import(file);
         for (const key in exports) {

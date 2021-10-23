@@ -1,6 +1,6 @@
-import MinionCard from '../core/MinionCard';
-import SpellCard from '../core/SpellCard';
-import {CardRarity} from '../core/Card';
+import MinionCard from '@core/cards/MinionCard';
+import SpellCard from '@core/cards/SpellCard';
+import {CardRarity} from '@core/cards/Card';
 
 export class KingKrushCard extends MinionCard {
   id = 1;

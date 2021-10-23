@@ -2,10 +2,12 @@ import * as fg from 'fast-glob';
 import * as YAML from 'yaml';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as merge from 'deepmerge';
 
-export default class i18N {
+export default class I18N {
   private locales = new Map<string, object>();
   private locale?: string;
+
   constructor(private localesPath: string) {}
   public async load() {
     const files = await fg('**/*.(yaml|yml)', {
@@ -18,23 +20,28 @@ export default class i18N {
         const yaml = YAML.parse(yamlFile);
         const info = yaml.info;
         delete yaml.info;
-        this.locales.set(info.locale, {
-          ...(this.locales.get(info.locale) ?? {}),
-          ...yaml,
-        });
+        this.locales.set(
+          info.locale,
+          merge(this.locales.get(info.locale) ?? {}, yaml)
+        );
       })
     );
   }
 
-  public setLocal(locale: string) {
+  public setLocale(locale: string) {
     if (this.locales.has(locale)) this.locale = locale;
+    return this.getLocale();
+  }
+
+  public getLocale(): string {
+    if (!this.locale || !this.locales.has(this.locale)) {
+      return (this.locale = this.locales.keys().next().value);
+    }
+    return this.locale;
   }
 
   private currentLocale(): any {
-    if (!this.locale || !this.locales.has(this.locale)) {
-      return this.locales.values().next().value ?? {};
-    }
-    return this.locales.get(this.locale);
+    return this.locales.get(this.getLocale()) ?? {};
   }
 
   public t(key: string): string {
@@ -50,5 +57,9 @@ export default class i18N {
       data = data[k];
     }
     return data.toString();
+  }
+
+  public getCatalog(): string[] {
+    return [...this.locales.keys()];
   }
 }
