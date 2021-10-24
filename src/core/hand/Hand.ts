@@ -7,6 +7,7 @@ export default class Hand extends ArrayCapacity<Card> {
   constructor() {
     super(Hand.#MAX_CARDS);
   }
+
   /**
    * @throws RangeError
    * @param card

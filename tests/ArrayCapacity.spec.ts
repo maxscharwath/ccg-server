@@ -20,21 +20,37 @@ describe('Array', () => {
     expect(array.length).toBe(0);
     expect(array[100]).toBeUndefined();
   });
-  test('try push method', () => {
+  test('push() method', () => {
     const array = new ArrayCapacity(2);
     array.push(1, 2, 3);
     expect(array.length).toBe(2);
     expect(array[0]).toBe(1);
     expect(array[1]).toBe(2);
     expect(array[3]).toBeUndefined();
+    expect([1, 2]).toEqual(expect.arrayContaining(array));
   });
-  test('try unshift method', () => {
+  test('unshift() method', () => {
     const array = new ArrayCapacity(2);
-    array.unshift(1, 2, 3);
+    array.unshift(4, 5, 6);
     expect(array.length).toBe(2);
-    expect(array[0]).toBe(1);
-    expect(array[1]).toBe(2);
+    expect(array[0]).toBe(4);
+    expect(array[1]).toBe(5);
     expect(array[3]).toBeUndefined();
+    expect([4, 5]).toEqual(expect.arrayContaining(array));
+  });
+  test('splice() method', () => {
+    const array = new ArrayCapacity(3, ...[1, 2, 3]);
+    expect([1, 2, 3]).toEqual(expect.arrayContaining(array));
+    array.splice(1, 1);
+    expect([1, 3]).toEqual(expect.arrayContaining(array));
+    array.splice(0, 2, 4, 5, 6, 7, 8);
+    expect([4, 5, 6]).toEqual(expect.arrayContaining(array));
+  });
+  test('at() method', () => {
+    const array = new ArrayCapacity(3, ...[1, 2, 3]);
+    expect(array.at(1)).toBe(2);
+    expect(() => array.at(-1)).toThrow(RangeError);
+    expect(() => array.at(3)).toThrow(RangeError);
   });
   test('Array from', () => {
     const array = ArrayCapacity.from([1, 2, 3, 4], 2);

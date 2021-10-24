@@ -15,6 +15,7 @@ export default class ArrayCapacity<T> extends Array<T> {
   constructor(capacity: number, ...items: T[]) {
     super(...items.slice(0, capacity));
     this.capacity = capacity;
+    //using Proxy to handle index accessor
     return new Proxy(this, {
       set: (target, key, value) => {
         const index = Number(key);
@@ -42,6 +43,10 @@ export default class ArrayCapacity<T> extends Array<T> {
     );
   }
 
+  /**
+   * @throws RangeError
+   * @param index
+   */
   public at(index: number): T {
     if (index < 0 || index >= this.capacity)
       throw new RangeError(`${index} is out the capacity of ${this.capacity}`);
