@@ -1,4 +1,5 @@
 export type CardId = number;
+
 export enum CardRarity {
   COMMON,
   RARE,
@@ -21,6 +22,7 @@ export default abstract class Card {
   public equals(card: Card): boolean {
     return card.id === this.id;
   }
+
   public getClass(): typeof Card {
     return this.constructor as typeof Card;
   }

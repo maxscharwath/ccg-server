@@ -20,6 +20,10 @@ class Iterator {
 export class BufferWriter extends Iterator {
   readonly #buffer: number[] = [];
 
+  get buffer(): Buffer {
+    return Buffer.from(this.#buffer);
+  }
+
   public null(): this {
     this.#buffer[this.index] = 0;
     this.next();
@@ -30,10 +34,6 @@ export class BufferWriter extends Iterator {
     const {bytes} = VarInt.encode(value, this.#buffer, this.index);
     this.next(bytes);
     return this;
-  }
-
-  get buffer(): Buffer {
-    return Buffer.from(this.#buffer);
   }
 
   public override toString(encoding: BufferEncoding = 'base64url'): string {
@@ -47,10 +47,12 @@ export class BufferWriter extends Iterator {
  */
 export class BufferReader extends Iterator {
   readonly #buffer: Buffer;
+
   constructor(code: string, encoding: BufferEncoding = 'base64url') {
     super();
     this.#buffer = Buffer.from(code, encoding);
   }
+
   public nextByte(): number {
     const value = this.#buffer[this.index];
     this.next();

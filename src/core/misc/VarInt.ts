@@ -50,6 +50,7 @@ function decode(
     bytes: counter - offset,
   };
 }
+
 export default {
   encode,
   decode,

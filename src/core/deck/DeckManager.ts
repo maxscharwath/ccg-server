@@ -7,19 +7,7 @@ import {BufferReader, BufferWriter} from '@core/misc/Buffer';
 export type CardTuple = [CardId, number];
 
 export default class DeckManager {
-  static #VERSION = 1;
-
-  /**
-   * Sort cards to array of CardTuple
-   * @param cards
-   * @return CardTuple[]
-   * @private
-   */
-  private static sort(cards: CardId[]): CardTuple[] {
-    const map = new Map<number, number>();
-    cards.forEach(card => map.set(card, (map.get(card) ?? 0) + 1));
-    return [...map].sort((a, b) => a[0] - b[0]);
-  }
+  static readonly VERSION = 0x1;
 
   /**
    * Stringify cards to base64 string
@@ -28,7 +16,7 @@ export default class DeckManager {
    */
   public static stringify(cards: CardId[]): string {
     const writer = new BufferWriter();
-    writer.null().write(this.#VERSION);
+    writer.null().write(this.VERSION);
     const sortedCards = DeckManager.sort(cards);
     writer.write(sortedCards.length);
     for (const [card, count] of sortedCards) {
@@ -50,7 +38,7 @@ export default class DeckManager {
     }
 
     const version = reader.nextVarint();
-    if (version !== this.#VERSION) {
+    if (version !== this.VERSION) {
       throw new Error(`Unsupported code version ${version}`);
     }
     const cards: CardTuple[] = [];
@@ -59,5 +47,17 @@ export default class DeckManager {
       cards.push([reader.nextVarint(), reader.nextVarint()]);
     }
     return cards;
+  }
+
+  /**
+   * Sort cards to array of CardTuple
+   * @param cards
+   * @return CardTuple[]
+   * @private
+   */
+  private static sort(cards: CardId[]): CardTuple[] {
+    const map = new Map<number, number>();
+    cards.forEach(card => map.set(card, (map.get(card) ?? 0) + 1));
+    return [...map].sort((a, b) => a[0] - b[0]);
   }
 }

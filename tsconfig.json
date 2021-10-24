@@ -5,6 +5,7 @@
     "outDir": "build",
     "allowSyntheticDefaultImports": true,
     "noImplicitOverride": true,
+    "suppressImplicitAnyIndexErrors": true,
     "strict": true,
     "declaration": false,
     "declarationMap": false,

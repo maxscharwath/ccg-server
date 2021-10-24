@@ -6,6 +6,7 @@ import Fastify, {FastifyInstance, FastifyServerOptions} from 'fastify';
 export default class Server {
   public fastify: FastifyInstance;
   public ws: WebSocketServer;
+
   constructor(opts?: FastifyServerOptions) {
     this.fastify = Fastify(opts);
     this.ws = new WebSocketServer({noServer: true});

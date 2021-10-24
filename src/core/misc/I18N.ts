@@ -9,6 +9,7 @@ export default class I18N {
   private locale?: string;
 
   constructor(private localesPath: string) {}
+
   public async load() {
     const files = await fg('**/*.(yaml|yml)', {
       cwd: path.join(process.cwd(), this.localesPath),
@@ -40,10 +41,6 @@ export default class I18N {
     return this.locale;
   }
 
-  private currentLocale(): any {
-    return this.locales.get(this.getLocale()) ?? {};
-  }
-
   public t(key: string): string {
     const keys = key.split('.');
     let data = this.currentLocale();
@@ -61,5 +58,9 @@ export default class I18N {
 
   public getCatalog(): string[] {
     return [...this.locales.keys()];
+  }
+
+  private currentLocale(): {} {
+    return this.locales.get(this.getLocale()) ?? {};
   }
 }
