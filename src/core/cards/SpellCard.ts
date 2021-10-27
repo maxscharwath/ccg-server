@@ -5,4 +5,6 @@ import Card from '@core/cards/Card';
  */
 export default abstract class SpellCard extends Card {
   public override readonly type = 'spell';
+
+  public onCast(): void {}
 }

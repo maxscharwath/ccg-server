@@ -45,7 +45,7 @@ export default class CardManager {
     return [...this.cards.values()].sort((a, b) => a.id - b.id);
   }
 
-  public getCardById(id: number): Readonly<Card> | undefined {
-    return this.cards.get(id);
+  public getCardById<T extends Card>(id: number): Readonly<T> | undefined {
+    return this.cards.get(id) as T;
   }
 }

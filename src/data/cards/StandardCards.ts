@@ -18,4 +18,22 @@ export class TheCoinCard extends SpellCard {
   name = 'The Coin Card';
   text = 'Give a coin';
   rarity = CardRarity.COMMON;
+
+  override onCast() {
+    super.onCast();
+    //todo give one mana.
+  }
+}
+
+export class PoisonCard extends SpellCard {
+  id = 3;
+  cost = 2;
+  name = 'Poison';
+  text = 'Add 1 damage to each minion each turn for 3 rounds';
+  rarity = CardRarity.COMMON;
+
+  override onCast() {
+    super.onCast();
+    //todo give poison effect to all enemy board.
+  }
 }
