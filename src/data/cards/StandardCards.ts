@@ -1,7 +1,6 @@
 import MinionCard from '@core/cards/MinionCard';
 import SpellCard from '@core/cards/SpellCard';
 import {CardRarity} from '@core/cards/Card';
-
 export class KingKrushCard extends MinionCard {
   id = 1;
   attack = 8;
@@ -24,7 +23,6 @@ export class TheCoinCard extends SpellCard {
     //todo give one mana.
   }
 }
-
 export class PoisonCard extends SpellCard {
   id = 3;
   cost = 2;

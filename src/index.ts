@@ -20,9 +20,14 @@ import {Log} from '@core/misc/Logger';
       })),
     };
   });
+
+  const game = new Game('player1', 'player2');
+  game.on('*', (event, params) => {
+    Log.info(event, params);
+    server.ws.clients.forEach(client => {
+      client.send(JSON.stringify({event, params}));
+    });
+  });
+  game.start();
   await server.listen(8080);
 })();
-
-const game = new Game('player1', 'player2');
-game.on('*', (event, params) => Log.info(event, params));
-game.start();
