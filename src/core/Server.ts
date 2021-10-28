@@ -21,6 +21,6 @@ export default class Server {
   }
 
   public listen(port: number) {
-    return this.fastify.listen(port);
+    return this.fastify.listen(port, '0.0.0.0');
   }
 }

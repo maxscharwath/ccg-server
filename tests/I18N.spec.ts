@@ -1,7 +1,7 @@
 import I18N from '@core/misc/I18N';
 
 describe('Test I18N class', () => {
-  const i18n = new I18N('./tests/locales/');
+  const i18n = new I18N('./tests/locales/', 'en_US');
   beforeAll(async () => {
     await i18n.load();
   });

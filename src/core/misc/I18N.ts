@@ -3,12 +3,15 @@ import * as YAML from 'yaml';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as merge from 'deepmerge';
+import {Log} from '@core/misc/Logger';
 
 export default class I18N {
   private locales = new Map<string, object>();
-  private locale?: string;
+  private locale: string;
 
-  constructor(private localesPath: string) {}
+  constructor(private localesPath: string, defaultLocale: string) {
+    this.locale = defaultLocale;
+  }
 
   public async load() {
     const files = await fg('**/*.(yaml|yml)', {
@@ -41,15 +44,16 @@ export default class I18N {
     return this.locale;
   }
 
-  public t(key: string): string {
+  public t(key: string, placeholder?: string): string {
     const keys = key.split('.');
     let data = this.currentLocale();
     for (const k of keys) {
       if (!(k in data)) {
-        console.warn(
-          `Translation missing for "${key}" for locale "${this.locale}"`
+        Log.warn(
+          `Translation missing for "${key}" for locale "${this.locale}"`,
+          {placeholder}
         );
-        return key;
+        return placeholder ?? key;
       }
       data = data[k];
     }

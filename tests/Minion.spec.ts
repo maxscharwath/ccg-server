@@ -1,6 +1,6 @@
-import CardManager from '../src/core/cards/CardManager';
-import Minion from '../src/core/Minion';
-import MinionCard from '../src/core/cards/MinionCard';
+import CardManager from '@core/cards/CardManager';
+import Minion from '@core/Minion';
+import MinionCard from '@core/cards/MinionCard';
 
 describe('Minion', () => {
   const cardManager = new CardManager();

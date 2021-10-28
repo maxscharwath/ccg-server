@@ -1,4 +1,6 @@
 # ccg-server
+![example workflow](https://github.com/maxscharwath/ccg-server/actions/workflows/actions_node.yml/badge.svg)
+
 A multiplayer collectible card game server
 
 The goal of this project is to create a collectible card game largely inspired by *Hearthstone*.

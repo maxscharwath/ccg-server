@@ -5,9 +5,8 @@ import Game from '@core/Game';
 import {Log} from '@core/misc/Logger';
 
 (async () => {
-  const i18n = new I18N('./locales/');
+  const i18n = new I18N('./locales/', 'fr_FR');
   await i18n.load();
-  i18n.setLocale('fr_FR');
   const cardManager = new CardManager();
   await cardManager.load();
   const server = new Server();
@@ -16,8 +15,8 @@ import {Log} from '@core/misc/Logger';
     return {
       cards: cardManager.getCards().map(card => ({
         ...card,
-        name: i18n.t(`cards.${card.id}.name`),
-        text: i18n.t(`cards.${card.id}.text`),
+        name: i18n.t(`cards.${card.id}.name`, card.name),
+        text: i18n.t(`cards.${card.id}.text`, card.text),
       })),
     };
   });

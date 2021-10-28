@@ -37,7 +37,7 @@ export default class Logger {
     options: Options = {
       format:
         '{timestamp} <{level}> {file}:{line} ({method}) {message} {metadata}',
-      dateFormat: 'YYYY-MM-DD HH:mm:ss:SS',
+      dateFormat: 'YYYY-MM-DD HH:mm:ss.SS',
       transports: [],
     }
   ) {
@@ -79,7 +79,7 @@ export default class Logger {
     } as Stack;
   }
 
-  #logMain(level: string, message: string, metadata: Metadata): Data {
+  #logMain(level: string, message: string, metadata?: Metadata): Data {
     const stack = Logger.getStackLog(1);
     const date = new Date();
     const output = TemplateStrings(this.#options.format, {
@@ -87,7 +87,7 @@ export default class Logger {
       timestamp: format(date, this.#options.dateFormat),
       level,
       message,
-      metadata: JSON.stringify(metadata),
+      metadata: metadata ? JSON.stringify(metadata) : '',
     });
     const data = {
       date,
@@ -102,23 +102,23 @@ export default class Logger {
     return data;
   }
 
-  public log(level: string, message: string, metadata: Metadata): Data {
+  public log(level: string, message: string, metadata?: Metadata): Data {
     return this.#logMain(level, message, metadata);
   }
 
-  public debug(message: string, metadata: Metadata): Data {
+  public debug(message: string, metadata?: Metadata): Data {
     return this.#logMain('debug', message, metadata);
   }
 
-  public info(message: string, metadata: Metadata): Data {
+  public info(message: string, metadata?: Metadata): Data {
     return this.#logMain('info', message, metadata);
   }
 
-  public warn(message: string, metadata: Metadata): Data {
+  public warn(message: string, metadata?: Metadata): Data {
     return this.#logMain('warn', message, metadata);
   }
 
-  public error(message: string, metadata: Metadata): Data {
+  public error(message: string, metadata?: Metadata): Data {
     return this.#logMain('error', message, metadata);
   }
 }

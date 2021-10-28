@@ -3,8 +3,7 @@ FROM node:12-alpine AS build
 WORKDIR /app
 COPY package*.json .
 RUN npm i
-COPY tsconfig.json .
-COPY src ./src
+COPY . .
 RUN npm run build
 RUN npm i --production
 

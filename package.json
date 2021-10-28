@@ -1,7 +1,11 @@
 {
   "name": "ccg-server",
   "version": "0.0.0",
-  "description": "",
+  "description": "A multiplayer collectible card game server",
+  "author": {
+    "name": "Maxime Scharwath",
+    "email": "maxscharwath@gmail.com"
+  },
   "main": "src/index.js",
   "files": [
     "src"
@@ -12,7 +16,7 @@
     "test": "jest",
     "lint": "gts lint --fix '**/*.ts'",
     "clean": "gts clean",
-    "dev": "ts-node -r tsconfig-paths/register ./src/index.ts",
+    "start": "ts-node -r tsconfig-paths/register ./src/index.ts",
     "fix": "gts fix --fix '**/*.ts'",
     "prepare": "husky install",
     "build": "tsc --project tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./dist/src"
@@ -40,5 +44,6 @@
   },
   "engines": {
     "node": ">=12.9.0"
-  }
+  },
+  "repository": "https://github.com/maxscharwath/ccg-server.git"
 }
