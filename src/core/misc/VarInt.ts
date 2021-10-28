@@ -1,13 +1,15 @@
-/**
- * Implementation of protocol-buffers varint
- * @see https://developers.google.com/protocol-buffers/docs/encoding#varints
- */
-
 const MSB = 0x80,
   REST = 0x7f,
   MSBALL = ~REST,
   INT = 2 ** 31;
 
+/**
+ * Writes a varint to the buffer
+ * @param value The value to read
+ * @param buffer The buffer to write to
+ * @param offset The offset to start writing at
+ * @returns bytes written and buffer
+ */
 function encode(value: number, buffer: number[] = [], offset = 0): {bytes: number; buffer: Uint8Array} {
   const tmpOffset = offset;
   while (value >= INT) {
@@ -25,6 +27,12 @@ function encode(value: number, buffer: number[] = [], offset = 0): {bytes: numbe
   };
 }
 
+/**
+ * Reads a varint from the buffer
+ * @param buffer The buffer to read from
+ * @param offset The offset to start reading from
+ * @returns value and bytes read
+ */
 function decode(buffer: number[] | Uint8Array, offset = 0): {bytes: number; value: number} {
   let res = 0,
     shift = 0,
@@ -44,6 +52,10 @@ function decode(buffer: number[] | Uint8Array, offset = 0): {bytes: number; valu
   };
 }
 
+/**
+ * Implementation of protocol-buffers varint
+ * @see https://developers.google.com/protocol-buffers/docs/encoding#varints
+ */
 export default {
   encode,
   decode,

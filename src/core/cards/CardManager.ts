@@ -5,13 +5,13 @@ import {Log} from '@core/misc/Logger';
 
 /**
  * Class CardManager is used to load and manage all the cards.
- * Cards are loaded from the cardsDataFolder. More than one card can be stored in the same file.
+ * @remarks Cards are loaded from the cardsDataFolder. More than one card can be stored in the same file.
  */
 export default class CardManager {
   private readonly cards = new Map<number, Readonly<Card>>();
   private loaded = false;
 
-  async #loadFromFile(file: string) {
+  async #loadFromFile(file: string): Promise<void> {
     const contents = await import(file);
     await Promise.allSettled(
       Object.entries<typeof Object>(contents).map(([key, CardClass]) =>
@@ -38,7 +38,7 @@ export default class CardManager {
     );
   }
 
-  public async load() {
+  public async load(): Promise<void> {
     const files = await fg('**/*.(ts|js)', {
       ignore: ['index.(ts|js)'],
       cwd: cardsDataFolder,

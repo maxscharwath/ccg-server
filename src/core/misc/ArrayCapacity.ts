@@ -1,7 +1,30 @@
+/**
+ * Class ArrayCapacity is an extended version of Array to limit the number of elements.
+ * @remarks It uses Proxy to handle index access correctly. The capacity is readonly. It can be set only in the constructor.
+ * @see Array
+ * @see Proxy
+ * @extends Array
+ * @author Maxime Scharwath
+ */
 // @ts-expect-error Force to override static method from Array
 export default class ArrayCapacity<T> extends Array<T> {
+  /**
+   * The maximum number of elements.
+   * @readonly
+   */
   public readonly capacity: number;
 
+  /**
+   * Constructor of ArrayCapacity.
+   * @param capacity The maximum number of elements.
+   */
+  constructor(capacity: number);
+  /**
+   * Constructor of ArrayCapacity.
+   * @param capacity The maximum number of elements.
+   * @param items The initial items.
+   */
+  constructor(capacity: number, ...items: T[]);
   constructor(capacity: number, ...items: T[]) {
     super(...items.slice(0, capacity));
     this.capacity = capacity;
@@ -17,10 +40,22 @@ export default class ArrayCapacity<T> extends Array<T> {
     });
   }
 
+  /**
+   * Creates an ArrayCapacity from an array-like object and capacity.
+   * @param arrayLike An array-like object to convert to an array.
+   * @param capacity The maximum number of elements.
+   * @returns A new ArrayCapacity instance.
+   */
   static override from<T>(arrayLike: ArrayLike<T>, capacity: number): ArrayCapacity<T> {
     return new ArrayCapacity<T>(capacity, ...Array.from(arrayLike));
   }
 
+  /**
+   * Returns a new ArrayCapacity from a set of elements and capacity.
+   * @param capacity The maximum number of elements.
+   * @param items A set of elements to include in the new ArrayCapacity object.
+   * @returns A new ArrayCapacity instance.
+   */
   static override of<T>(capacity: number, ...items: T[]): ArrayCapacity<T> {
     return new ArrayCapacity<T>(capacity, ...items);
   }
@@ -38,8 +73,10 @@ export default class ArrayCapacity<T> extends Array<T> {
   }
 
   /**
-   * @throws RangeError
-   * @param index
+   * Gets the element at the specified index.
+   * @throws RangeError if the index is out of range.
+   * @param index The index to get.
+   * @returns The element at the specified index.
    */
   public at(index: number): T {
     if (index < 0 || index >= this.capacity) throw new RangeError(`${index} is out the capacity of ${this.capacity}`);
