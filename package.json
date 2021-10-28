@@ -44,7 +44,7 @@
     "yaml": "^2.0.0-8"
   },
   "engines": {
-    "node": ">=12.9.0"
+    "node": ">=14.0.0"
   },
   "repository": "https://github.com/maxscharwath/ccg-server.git"
 }

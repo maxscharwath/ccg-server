@@ -10,3 +10,6 @@ cards:
   0x0002:
     name: The Coin Card
     text: Gain 1 Mana Crystal this turn only.
+  0x0003:
+    name: Poison
+    text: Add 1 damage to each minion each turn for 3 turns

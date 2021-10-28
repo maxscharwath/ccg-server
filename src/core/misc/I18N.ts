@@ -41,6 +41,18 @@ export default class I18N {
     return this.locale;
   }
 
+  public hasKey(key: string, locale?: string): boolean {
+    const keys = key.split('.');
+    let data = this.currentLocale(locale);
+    for (const k of keys) {
+      if (!(k in data)) {
+        return false;
+      }
+      data = data[k];
+    }
+    return true;
+  }
+
   public t(key: string, placeholder?: string): string {
     const keys = key.split('.');
     let data = this.currentLocale();
@@ -58,7 +70,7 @@ export default class I18N {
     return [...this.locales.keys()];
   }
 
-  private currentLocale(): {} {
-    return this.locales.get(this.getLocale()) ?? {};
+  private currentLocale(locale?: string): {} {
+    return this.locales.get(locale ?? this.getLocale()) ?? {};
   }
 }

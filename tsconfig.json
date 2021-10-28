@@ -10,6 +10,8 @@
     "declaration": false,
     "declarationMap": false,
     "sourceMap": false,
+    "target": "ESNext",
+    "useDefineForClassFields": true,
     "lib": [
       "es2020"
     ],

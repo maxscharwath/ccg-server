@@ -10,3 +10,7 @@ cards:
   0x0002:
     name: La pièce
     text: Vous gagnez 1 cristal de mana pour ce tour uniquement
+  0x0003:
+    name: Poison
+    text: Ajoute 1 dégât à chaque serviteur chaque tour pendant 3 tours
+

@@ -1,4 +1,4 @@
-FROM node:12-alpine AS build
+FROM node:14-alpine AS build
 
 WORKDIR /app
 COPY package*.json .
@@ -10,6 +10,7 @@ RUN npm i --production
 FROM alpine:3
 RUN apk add nodejs --no-cache
 WORKDIR /app
+COPY package*.json .
 COPY locales ./locales
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist/src ./src
