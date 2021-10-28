@@ -8,6 +8,8 @@
  * @param {string} srcPath
  * @param {string} tsconfigPath
  */
+import * as path from 'path';
+
 function makeModuleNameMapper(srcPath: string, tsconfigPath: string) {
   const {paths} = require(tsconfigPath).compilerOptions;
   const aliases: {[key: string]: string} = {};
@@ -20,7 +22,10 @@ function makeModuleNameMapper(srcPath: string, tsconfigPath: string) {
 }
 
 const TS_CONFIG_PATH = './tsconfig.json';
-const SRC_PATH = '<rootDir>';
+const SRC_PATH = path.join(
+  '<rootDir>',
+  require(TS_CONFIG_PATH).compilerOptions.rootDir
+);
 
 export default {
   collectCoverage: true,

@@ -2,7 +2,7 @@ import I18N from '@core/misc/I18N';
 import CardManager from '@core/cards/CardManager';
 import Server from '@core/Server';
 import Game from '@core/Game';
-import Logger, {Log} from '@core/misc/Logger';
+import {Log} from '@core/misc/Logger';
 
 (async () => {
   const i18n = new I18N('./locales/');
