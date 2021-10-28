@@ -19,10 +19,7 @@ export default class Deck extends ArrayCapacity<Card> {
     if (this.filter(c => c.equals(card)).length >= 2) {
       throw new Error('Deck can only include 2 of each card');
     }
-    if (
-      card.rarity === CardRarity.LEGENDARY &&
-      this.filter(c => c.equals(card)).length >= 1
-    ) {
+    if (card.rarity === CardRarity.LEGENDARY && this.filter(c => c.equals(card)).length >= 1) {
       throw new Error('Deck can only include 1 of each card of type Legendary');
     }
 

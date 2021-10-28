@@ -8,11 +8,7 @@ const MSB = 0x80,
   MSBALL = ~REST,
   INT = 2 ** 31;
 
-function encode(
-  value: number,
-  buffer: number[] = [],
-  offset = 0
-): {bytes: number; buffer: Uint8Array} {
+function encode(value: number, buffer: number[] = [], offset = 0): {bytes: number; buffer: Uint8Array} {
   const tmpOffset = offset;
   while (value >= INT) {
     buffer[offset++] = (value & 0xff) | MSB;
@@ -29,10 +25,7 @@ function encode(
   };
 }
 
-function decode(
-  buffer: number[] | Uint8Array,
-  offset = 0
-): {bytes: number; value: number} {
+function decode(buffer: number[] | Uint8Array, offset = 0): {bytes: number; value: number} {
   let res = 0,
     shift = 0,
     counter = offset,

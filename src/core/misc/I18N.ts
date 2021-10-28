@@ -24,10 +24,7 @@ export default class I18N {
         const yaml = YAML.parse(yamlFile);
         const info = yaml.info;
         delete yaml.info;
-        this.locales.set(
-          info.locale,
-          merge(this.locales.get(info.locale) ?? {}, yaml)
-        );
+        this.locales.set(info.locale, merge(this.locales.get(info.locale) ?? {}, yaml));
       })
     );
   }
@@ -49,10 +46,7 @@ export default class I18N {
     let data = this.currentLocale();
     for (const k of keys) {
       if (!(k in data)) {
-        Log.warn(
-          `Translation missing for "${key}" for locale "${this.locale}"`,
-          {placeholder}
-        );
+        Log.warn(`Translation missing for "${key}" for locale "${this.locale}"`, {placeholder});
         return placeholder ?? key;
       }
       data = data[k];

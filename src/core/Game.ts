@@ -24,6 +24,14 @@ export default class Game extends EventEmitter<GameEvents> {
     this.players = players;
   }
 
+  public get round(): number {
+    return this.turn >> 1;
+  }
+
+  private get currentPlayer(): Player {
+    return this.players[this.turn % 2];
+  }
+
   public start() {
     this.startAt = Date.now();
     this.#onMain();
@@ -36,7 +44,7 @@ export default class Game extends EventEmitter<GameEvents> {
 
   #onTurn(player: Player) {
     clearTimeout(this.#turnTimer);
-    this.#turnTimer = setTimeout(() => this.nextTurn(), 2_000);
+    this.#turnTimer = setTimeout(() => this.nextTurn(), 75_000);
     this.emit('turn', player);
   }
 
@@ -46,13 +54,5 @@ export default class Game extends EventEmitter<GameEvents> {
       this.emit('round');
     }
     this.#onTurn(this.currentPlayer);
-  }
-
-  private get currentPlayer(): Player {
-    return this.players[this.turn % 2];
-  }
-
-  public get round(): number {
-    return this.turn >> 1;
   }
 }

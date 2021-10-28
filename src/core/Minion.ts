@@ -15,10 +15,6 @@ export default class Minion {
     this.#card = card;
   }
 
-  public getCard(): MinionCard {
-    return this.#card;
-  }
-
   public get attack(): number {
     return this.#card.attack;
   }
@@ -30,6 +26,10 @@ export default class Minion {
   static fromCard(card: Card): Minion {
     if (card instanceof MinionCard) return new Minion(card);
     throw new Error(`Cannot create a minion with this card ${card.toString()}`);
+  }
+
+  public getCard(): MinionCard {
+    return this.#card;
   }
 
   public addModifier(...modifiers: ModifierFunction[]) {

@@ -19,9 +19,7 @@ describe('Array', () => {
       index += VarInt.encode(100000, buffer, index).bytes;
       index += VarInt.encode(1, buffer, index).bytes;
       expect(index).toBe(6);
-      expect([172, 2, 160, 141, 6, 1]).toEqual(
-        expect.arrayContaining([...buffer])
-      );
+      expect([172, 2, 160, 141, 6, 1]).toEqual(expect.arrayContaining([...buffer]));
     });
   });
 

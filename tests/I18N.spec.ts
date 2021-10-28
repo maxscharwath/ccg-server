@@ -6,9 +6,7 @@ describe('Test I18N class', () => {
     await i18n.load();
   });
   test('getCatalog() should return an array of locales', () => {
-    expect(['en_US', 'fr_FR']).toEqual(
-      expect.arrayContaining(i18n.getCatalog())
-    );
+    expect(['en_US', 'fr_FR']).toEqual(expect.arrayContaining(i18n.getCatalog()));
   });
   test('setLocale() & getLocale()', () => {
     expect(i18n.getLocale()).toBe('en_US');

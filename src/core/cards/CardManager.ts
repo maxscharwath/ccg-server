@@ -1,6 +1,7 @@
 import * as fg from 'fast-glob';
-import * as path from 'path';
 import Card from '@core/cards/Card';
+import {cardsDataFolder} from '@data/cards';
+import {Log} from '@core/misc/Logger';
 
 export default class CardManager {
   private readonly cards = new Map<number, Readonly<Card>>();
@@ -8,28 +9,29 @@ export default class CardManager {
 
   public async load() {
     const files = await fg('**/*.(ts|js)', {
-      cwd: path.join(process.cwd(), 'src/data/cards'),
+      ignore: ['index.(ts|js)'],
+      cwd: cardsDataFolder,
       absolute: true,
     });
-    const result = await Promise.allSettled(
-      files.map(async file => {
-        const exports = await import(file);
-        for (const key in exports) {
-          const CardClass = exports[key];
-          if (CardClass.prototype instanceof Card) {
-            const card = new CardClass() as Card;
-            if (this.cards.has(card.id)) {
-              throw new Error(
-                `There are already a card with this id (${file}, ${key})`
-              );
-            }
-            console.log(`${card.getIdStr()} loaded`);
-            this.cards.set(card.id, Object.freeze(card));
-          }
-        }
-      })
+    await Promise.all(
+      files
+        .map(async file =>
+          Object.entries<typeof Object>(await import(file))
+            .map(async ([key, CardClass]) => {
+              if (!(CardClass.prototype instanceof Card)) {
+                throw new Error(`${key} is not a ${Card.name}`);
+              }
+              const card = Object.freeze(new CardClass() as Card);
+              if (this.cards.has(card.id)) {
+                throw new Error(`There are already a card with this id (${file}, ${key})`);
+              }
+              this.cards.set(card.id, card);
+              return card;
+            })
+            .map(p => p.then(card => Log.info(`${card.getIdStr()} loaded`)).catch(e => Log.error(e)))
+        )
+        .map(p => p.catch(e => Log.error(e)))
     );
-    console.log(result);
     this.loaded = true;
   }
 

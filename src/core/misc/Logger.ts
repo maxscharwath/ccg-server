@@ -33,10 +33,10 @@ export type Options = {
 
 export default class Logger {
   #options: Options;
+
   constructor(
     options: Options = {
-      format:
-        '{timestamp} <{level}> {file}:{line} ({method}) {message} {metadata}',
+      format: '{timestamp} <{level}> {file}:{line} ({method}) {message} {metadata}',
       dateFormat: 'YYYY-MM-DD HH:mm:ss.SS',
       transports: [],
     }
@@ -50,11 +50,7 @@ export default class Logger {
     });
 
     this.#options.transports.push(async data => {
-      const file = path.join(
-        process.cwd(),
-        'logs',
-        `${format(data.date, 'YYYY-MM-DD')}.log`
-      );
+      const file = path.join(process.cwd(), 'logs', `${format(data.date, 'YYYY-MM-DD')}.log`);
       await fs.promises.mkdir(path.dirname(file), {recursive: true});
       await fs.promises.appendFile(file, `${data.output}\n`);
     });
@@ -62,14 +58,14 @@ export default class Logger {
 
   private static getStackLog(index = 0): Stack | undefined {
     const stackReg = /at\s+(.*)\s+\((.*):(\d*):(\d*)\)/i;
-    const stackReg2 = /at\s+(.*)(.*):(\d*):(\d*)/i;
+    const stackReg2 = /at\s+()(.*):(\d*):(\d*)/i;
     const stackList = new Error().stack?.split('\n').slice(3);
     if (!stackList) return;
     const s = stackList[index],
       sp = stackReg.exec(s) ?? stackReg2.exec(s);
     if (!(sp && sp.length === 5)) return;
     return {
-      method: sp[1],
+      method: sp[1] === '' ? '<anonymous>' : sp[1],
       path: sp[2],
       line: sp[3],
       pos: sp[4],
@@ -77,6 +73,26 @@ export default class Logger {
       file: path.basename(sp[2]),
       stack: stackList.slice(index).join('\n'),
     } as Stack;
+  }
+
+  public log(level: string, message: string, metadata?: Metadata): Data {
+    return this.#logMain(level, message, metadata);
+  }
+
+  public debug(message: string, metadata?: Metadata): Data {
+    return this.#logMain('debug', message, metadata);
+  }
+
+  public info(message: string, metadata?: Metadata): Data {
+    return this.#logMain('info', message, metadata);
+  }
+
+  public warn(message: string, metadata?: Metadata): Data {
+    return this.#logMain('warn', message, metadata);
+  }
+
+  public error(message: string, metadata?: Metadata): Data {
+    return this.#logMain('error', message, metadata);
   }
 
   #logMain(level: string, message: string, metadata?: Metadata): Data {
@@ -100,26 +116,6 @@ export default class Logger {
     };
     this.#options.transports.forEach(transport => transport(data));
     return data;
-  }
-
-  public log(level: string, message: string, metadata?: Metadata): Data {
-    return this.#logMain(level, message, metadata);
-  }
-
-  public debug(message: string, metadata?: Metadata): Data {
-    return this.#logMain('debug', message, metadata);
-  }
-
-  public info(message: string, metadata?: Metadata): Data {
-    return this.#logMain('info', message, metadata);
-  }
-
-  public warn(message: string, metadata?: Metadata): Data {
-    return this.#logMain('warn', message, metadata);
-  }
-
-  public error(message: string, metadata?: Metadata): Data {
-    return this.#logMain('error', message, metadata);
   }
 }
 

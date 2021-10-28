@@ -14,8 +14,6 @@ export default function (
       value = value ? value[property] : undefined;
     }
     const transformedValue = options.transform({value, key});
-    return transformedValue === undefined
-      ? placeholder
-      : String(transformedValue);
+    return transformedValue === undefined ? placeholder : String(transformedValue);
   });
 }

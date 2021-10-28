@@ -19,7 +19,8 @@
     "start": "ts-node -r tsconfig-paths/register ./src/index.ts",
     "fix": "gts fix --fix '**/*.ts'",
     "prepare": "husky install",
-    "build": "tsc --project tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./dist/src"
+    "build": "tsc --project tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./dist/src",
+    "dockerize": "docker build -t ccg-server ."
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",
