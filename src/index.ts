@@ -12,6 +12,7 @@ import {Log} from '@core/misc/Logger';
   const server = new Server();
   server.fastify.get('/', async (request, reply) => {
     reply.type('application/json').code(200);
+    console.log(cardManager.getCards());
     return {
       cards: cardManager.getCards().map(card => ({
         ...card,
