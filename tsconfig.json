@@ -10,7 +10,6 @@
     "strict": true,
     "declaration": false,
     "declarationMap": false,
-    "sourceMap": false,
     "target": "ESNext",
     "useDefineForClassFields": true,
     "removeComments": true,
