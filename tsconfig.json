@@ -12,6 +12,7 @@
     "sourceMap": false,
     "target": "ESNext",
     "useDefineForClassFields": true,
+    "removeComments": true,
     "lib": [
       "es2020"
     ],

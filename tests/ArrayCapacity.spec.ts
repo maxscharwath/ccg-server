@@ -49,7 +49,8 @@ describe('Array', () => {
   test('at() method', () => {
     const array = new ArrayCapacity(3, ...[1, 2, 3]);
     expect(array.at(1)).toBe(2);
-    expect(() => array.at(-1)).toThrow(RangeError);
+    expect(array.at(-1)).toBe(3);
+    expect(() => array.at(-4)).toThrow(RangeError);
     expect(() => array.at(3)).toThrow(RangeError);
   });
   test('Array from', () => {

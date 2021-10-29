@@ -73,12 +73,13 @@ export default class ArrayCapacity<T> extends Array<T> {
   }
 
   /**
-   * Gets the element at the specified index.
+   * Takes an integer value and returns the item at that index, allowing for positive and negative integers. Negative integers count back from the last item in the array.
    * @throws RangeError if the index is out of range.
    * @param index The index to get.
    * @returns The element at the specified index.
    */
   public at(index: number): T {
+    if (index < 0) index = this.length + index;
     if (index < 0 || index >= this.capacity) throw new RangeError(`${index} is out the capacity of ${this.capacity}`);
     return this[index];
   }
