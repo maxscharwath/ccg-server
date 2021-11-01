@@ -37,4 +37,10 @@ export default abstract class Card {
   public isReadonly(): boolean {
     return Object.isFrozen(this);
   }
+
+  public toJSON(): object {
+    return {
+      ...this,
+    };
+  }
 }
