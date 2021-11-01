@@ -6,16 +6,14 @@ export class KingKrushCard extends MinionCard {
   attack = 8;
   cost = 9;
   health = 8;
-  name = 'King Krush';
-  text = 'Charge';
+  tag = 'king_krush';
   rarity = CardRarity.LEGENDARY;
 }
 
 export class TheCoinCard extends SpellCard {
   id = 2;
   cost = 9;
-  name = 'The Coin Card';
-  text = 'Give a coin';
+  tag = 'the_coin';
   rarity = CardRarity.COMMON;
 
   override onCast() {
@@ -26,8 +24,7 @@ export class TheCoinCard extends SpellCard {
 export class PoisonCard extends SpellCard {
   id = 3;
   cost = 2;
-  name = 'Poison';
-  text = 'Add 1 damage to each minion each turn for 3 rounds';
+  tag = 'poison';
   rarity = CardRarity.COMMON;
 
   override onCast() {

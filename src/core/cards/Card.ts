@@ -11,13 +11,12 @@ export enum CardRarity {
  * Class Card represent the base of all cards
  */
 export default abstract class Card {
+  public static readonly RARITY: typeof CardRarity = CardRarity;
   public readonly type: string = 'card';
-  abstract readonly id: CardId;
-  abstract readonly name: string;
-  abstract readonly text: string;
-  abstract readonly rarity: CardRarity;
-
-  abstract cost: number;
+  public abstract readonly id: CardId;
+  public abstract readonly tag: string;
+  public abstract readonly rarity: CardRarity;
+  public abstract cost: number;
 
   public equals(card: Card): boolean {
     return card.id === this.id;
@@ -32,6 +31,10 @@ export default abstract class Card {
   }
 
   public clone<T extends Card>(this: Readonly<T> | T): T {
-    return new (this.getClass())() as T;
+    return Object.assign(new (this.getClass())() as T, this);
+  }
+
+  public isReadonly(): boolean {
+    return Object.isFrozen(this);
   }
 }

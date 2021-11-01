@@ -1,7 +1,7 @@
-import CardManager from '@core/cards/CardManager';
 import Card, {CardRarity} from '../src/core/cards/Card';
 import MinionCard from '../src/core/cards/MinionCard';
 import SpellCard from '../src/core/cards/SpellCard';
+import CardManager from '../src/core/cards/CardManager';
 
 describe('CardManager', () => {
   test('should be a class', () => {
@@ -23,9 +23,8 @@ describe('CardManager', () => {
     class TestSpellCard extends SpellCard {
       cost = 2;
       id = 1;
-      name = 'TestCard';
+      tag = 'test_card';
       rarity = CardRarity.RARE;
-      text = 'TestCard description';
     }
     const card = cardManager.addCard(TestSpellCard);
     expect(card).toBeInstanceOf(Card);
@@ -50,9 +49,8 @@ describe('CardManager', () => {
           cost = 2;
           health = 3;
           id = 1;
-          name = 'TestCard';
+          tag = 'test_card';
           rarity = CardRarity.RARE;
-          text = 'TestCard description';
         }
       );
       expect(cardManager.countCards()).toBe(1);
