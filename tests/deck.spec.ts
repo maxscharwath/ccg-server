@@ -1,4 +1,4 @@
-import DeckManager from '@core/deck/DeckManager';
+import DeckManager from '../src/core/deck/DeckManager';
 
 describe('Deck tests', () => {
   test('stringify', async () => {

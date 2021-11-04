@@ -1,4 +1,4 @@
-import ArrayCapacity from '@core/misc/ArrayCapacity';
+import ArrayCapacity from '../src/core/misc/ArrayCapacity';
 
 describe('Array', () => {
   test('capacity should be the same as constructor args', () => {

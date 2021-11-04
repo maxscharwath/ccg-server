@@ -1,20 +1,27 @@
-import CardManager from '@core/cards/CardManager';
-import Minion from '@core/Minion';
-import MinionCard from '@core/cards/MinionCard';
+import CardManager from '../src/core/cards/CardManager';
+import MinionCard from '../src/core/cards/MinionCard';
+import Minion from '../src/core/Minion';
 
 describe('Minion', () => {
   const cardManager = new CardManager();
   beforeAll(async () => {
     await cardManager.load();
   });
-  test('create', () => {
-    const card = cardManager.getCardById<MinionCard>(0x0001);
-    if (!card) throw new Error('Cannot find the card');
-    const minion = Minion.fromCard(card);
+  test('Minion should be created from CardManager', () => {
+    const minionCard = cardManager.getCardById<MinionCard>(0x0001);
+    const minion = new Minion(minionCard);
+    expect(minion).toBeDefined();
     expect(minion).toBeInstanceOf(Minion);
-    expect(minion.attack).toBe(card.attack);
-    expect(minion.health).toBe(card.health);
-    console.log(minion.applyModifier());
+    expect(minion.attack).toBe(minionCard.attack);
+    expect(minion.health).toBe(minionCard.health);
+  });
+  test('Minion Modifier should works', () => {
+    const card = cardManager.getCardById<MinionCard>(0x0001);
+    const minion = Minion.fromCard(card);
+    expect(minion.applyModifier()).toStrictEqual({
+      attack: card.attack,
+      health: card.health,
+    });
     minion.addModifier(
       modifier => ({
         attack: modifier.attack / 2,
@@ -24,6 +31,9 @@ describe('Minion', () => {
         health: modifier.health - 5,
       })
     );
-    console.log(minion.applyModifier());
+    expect(minion.applyModifier()).toStrictEqual({
+      attack: card.attack / 2,
+      health: card.health + 2 - 5,
+    });
   });
 });

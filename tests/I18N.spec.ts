@@ -1,4 +1,4 @@
-import I18N from '@core/misc/I18N';
+import I18N from '../src/core/misc/I18N';
 
 describe('Test I18N class', () => {
   const i18n = new I18N('./tests/locales/', 'en_US');

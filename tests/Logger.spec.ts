@@ -1,6 +1,13 @@
-import {Log} from '@core/misc/Logger';
+import Logger from '../src/core/misc/Logger';
 
 describe('Logger', () => {
+  const Log = new Logger();
+  test('log', () => {
+    const log = Log.log('log', 'log1', {hello: 'world'});
+    expect(log.level).toBe('log');
+    expect(log.message).toBe('log1');
+    expect(log.metadata).toEqual({hello: 'world'});
+  });
   test('log error', () => {
     const log = Log.error('log1', {hello: 'world'});
     expect(log.level).toBe('error');

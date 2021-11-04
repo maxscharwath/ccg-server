@@ -46,19 +46,28 @@ export default class Logger {
     };
   }
 
-  static TRANSPORTS: {[key: string]: Transport} = {
-    async DATED_LOG(data, options) {
-      const filePrefix = options.name ? `${options.name}-` : '';
-      const file = path.join(process.cwd(), options.logFolder, `${filePrefix}${format(data.date, 'YYYY-MM-DD')}.log`);
-      await fs.promises.mkdir(path.dirname(file), {recursive: true});
-      await fs.promises.appendFile(file, `${data.output}\n`);
-    },
-    async NAME_LOG(data, options) {
-      const file = path.join(process.cwd(), options.logFolder, `${options.name ?? 'default'}`);
-      await fs.promises.mkdir(path.dirname(file), {recursive: true});
-      await fs.promises.appendFile(file, `${data.output}\n`);
-    },
-    async CONSOLE_LOG(data) {
+  static TRANSPORTS = {
+    DATED_LOG:
+      (...subFolders: string[]) =>
+      async (data: Data, options: Options) => {
+        const filePrefix = options.name ? `${options.name}-` : '';
+        const file = path.join(
+          process.cwd(),
+          options.logFolder,
+          ...subFolders,
+          `${filePrefix}${format(data.date, 'YYYY-MM-DD')}.log`
+        );
+        await fs.promises.mkdir(path.dirname(file), {recursive: true});
+        await fs.promises.appendFile(file, `${data.output}\n`);
+      },
+    NAME_LOG:
+      (...subFolders: string[]) =>
+      async (data: Data, options: Options) => {
+        const file = path.join(process.cwd(), options.logFolder, ...subFolders, `${options.name ?? 'default'}`);
+        await fs.promises.mkdir(path.dirname(file), {recursive: true});
+        await fs.promises.appendFile(file, `${data.output}\n`);
+      },
+    CONSOLE_LOG: () => async (data: Data) => {
       if (data.level === 'warn') console.warn(data.output);
       else if (data.level === 'error') console.error(data.output);
       else console.log(data.output);
@@ -129,5 +138,5 @@ export default class Logger {
 }
 
 export const Log = new Logger({
-  transports: [Logger.TRANSPORTS.CONSOLE_LOG, Logger.TRANSPORTS.DATED_LOG],
+  transports: [Logger.TRANSPORTS.CONSOLE_LOG(), Logger.TRANSPORTS.DATED_LOG()],
 });

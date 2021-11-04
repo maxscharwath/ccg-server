@@ -1,16 +1,16 @@
-import VarInt from '@core/misc/VarInt';
+import VarInt from '../src/core/misc/VarInt';
 
 describe('Array', () => {
   describe('encode', () => {
     test('1 varint should be encoded as [1]', () => {
       const {buffer, bytes} = VarInt.encode(1);
       expect(bytes).toBe(1);
-      expect([1]).toEqual(expect.arrayContaining([...buffer]));
+      expect([1]).toEqual(expect.arrayContaining(Array.from(buffer)));
     });
     test('300 varint should be encoded as [172,2]', () => {
       const {buffer, bytes} = VarInt.encode(300);
       expect(bytes).toBe(2);
-      expect([172, 2]).toEqual(expect.arrayContaining([...buffer]));
+      expect([172, 2]).toEqual(expect.arrayContaining(Array.from(buffer)));
     });
     test('buffer and offset should works', () => {
       const buffer: number[] = [];

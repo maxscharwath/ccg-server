@@ -10,11 +10,11 @@ export type Options = {
  * @returns The transformed template string.
  * @author Maxime Scharwath
  */
-export default function (
+export default (
   template: string,
   data: unknown[] | Record<string, unknown>,
   options: Options = {transform: ({value}) => value}
-) {
+) => {
   const braceRegex = /{(\d+|[a-z$_][\w\-$]*?(?:\.[\w\-$]*?)*?)}/gi;
   return template.replace(braceRegex, (placeholder: string, key: string) => {
     let value = data;
@@ -24,4 +24,4 @@ export default function (
     const transformedValue = options.transform({value, key});
     return transformedValue === undefined ? placeholder : String(transformedValue);
   });
-}
+};
