@@ -24,37 +24,46 @@ type Data = {
   rawOutput: Readonly<string>;
   date: Date;
 };
-
+type Transport = (data: Data, options: Options) => void;
 export type Options = {
+  name?: string;
   format: string;
   dateFormat: string;
-  transports: ((data: Data) => void)[];
+  logFolder: string;
+  transports: Transport[];
 };
 
 export default class Logger {
-  #options: Options;
+  readonly #options: Options;
 
-  constructor(
-    options: Options = {
+  constructor(options: Partial<Options> = {}) {
+    this.#options = {
       format: '{timestamp} <{level}> {file}:{line} ({method}) {message} {metadata}',
       dateFormat: 'YYYY-MM-DD HH:mm:ss.SS',
+      logFolder: 'logs',
       transports: [],
-    }
-  ) {
-    this.#options = options;
+      ...options,
+    };
+  }
 
-    this.#options.transports.push(data => {
+  static TRANSPORTS: {[key: string]: Transport} = {
+    async DATED_LOG(data, options) {
+      const filePrefix = options.name ? `${options.name}-` : '';
+      const file = path.join(process.cwd(), options.logFolder, `${filePrefix}${format(data.date, 'YYYY-MM-DD')}.log`);
+      await fs.promises.mkdir(path.dirname(file), {recursive: true});
+      await fs.promises.appendFile(file, `${data.output}\n`);
+    },
+    async NAME_LOG(data, options) {
+      const file = path.join(process.cwd(), options.logFolder, `${options.name ?? 'default'}`);
+      await fs.promises.mkdir(path.dirname(file), {recursive: true});
+      await fs.promises.appendFile(file, `${data.output}\n`);
+    },
+    async CONSOLE_LOG(data) {
       if (data.level === 'warn') console.warn(data.output);
       else if (data.level === 'error') console.error(data.output);
       else console.log(data.output);
-    });
-
-    this.#options.transports.push(async data => {
-      const file = path.join(process.cwd(), 'logs', `${format(data.date, 'YYYY-MM-DD')}.log`);
-      await fs.promises.mkdir(path.dirname(file), {recursive: true});
-      await fs.promises.appendFile(file, `${data.output}\n`);
-    });
-  }
+    },
+  };
 
   private static getStackLog(index = 0): Stack | undefined {
     const stackReg = /at\s+(.*)\s+\((.*):(\d*):(\d*)\)/i;
@@ -114,9 +123,11 @@ export default class Logger {
       stack,
       output,
     };
-    this.#options.transports.forEach(transport => transport(data));
+    this.#options.transports.forEach(transport => transport(data, {...this.#options}));
     return data;
   }
 }
 
-export const Log = new Logger();
+export const Log = new Logger({
+  transports: [Logger.TRANSPORTS.CONSOLE_LOG, Logger.TRANSPORTS.DATED_LOG],
+});
