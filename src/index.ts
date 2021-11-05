@@ -6,8 +6,10 @@ import {Log} from '@core/misc/Logger';
 import localizeCard from '@core/cards/LocalizedCard';
 
 (async () => {
-  const i18n = new I18N('./locales/', 'en-US');
+  const i18n = new I18N('./locales/', 'fr-fr');
   await i18n.load();
+  Log.info('I18N catalog', i18n.getCatalog());
+  Log.info('I18N locale', i18n.getLocale());
   const cardManager = new CardManager();
   await cardManager.load();
   const server = new Server();

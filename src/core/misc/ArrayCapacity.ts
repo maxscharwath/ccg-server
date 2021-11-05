@@ -75,7 +75,7 @@ export default class ArrayCapacity<T> extends Array<T> {
   /**
    * Takes an integer value and returns the item at that index, allowing for positive and negative integers. Negative integers count back from the last item in the array.
    * @throws RangeError if the index is out of range.
-   * @param index The index to get.
+   * @param index The index to getData.
    * @returns The element at the specified index.
    */
   public at(index: number): T {

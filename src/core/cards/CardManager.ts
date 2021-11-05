@@ -95,7 +95,7 @@ export default class CardManager {
 
   /**
    * Get a card by its id.
-   * @remarks The returned card is readonly. {@link CardManager.getMutableCardById} is the recommended to get a mutable card.
+   * @remarks The returned card is readonly. {@link CardManager.getMutableCardById} is the recommended to getData a mutable card.
    * @param id The id of the card.
    * @throws RangeError if the card is not found.
    * @returns The card
@@ -109,7 +109,7 @@ export default class CardManager {
 
   /**
    * Get a card by its id.
-   * @remarks The returned card is mutable. {@link CardManager.getCardById} is the recommended to get a readonly card.
+   * @remarks The returned card is mutable. {@link CardManager.getCardById} is the recommended to getData a readonly card.
    * @param id The id of the card.
    * @throws RangeError if the card is not found.
    * @returns The card

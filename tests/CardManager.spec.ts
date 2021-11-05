@@ -55,7 +55,7 @@ describe('CardManager', () => {
       );
       expect(cardManager.countCards()).toBe(1);
     });
-    test('should get a cards by id', () => {
+    test('should getData a cards by id', () => {
       const card = cardManager.getCardById<MinionCard>(1);
       expect(card).toBeInstanceOf(Card);
       expect(card).toBeInstanceOf(MinionCard);
