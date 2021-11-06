@@ -19,7 +19,7 @@ export default abstract class Card {
   public abstract readonly rarity: CardRarity;
   public abstract cost: number;
   readonly #uuid = crypto.randomUUID();
-  #origin?: Card | Readonly<Card>;
+  #origin?: Card;
 
   get uuid() {
     return this.#uuid;
@@ -29,7 +29,7 @@ export default abstract class Card {
     return card.id === this.id;
   }
 
-  public getClass<T extends Card>(this: Readonly<T> | T): new (...args: any[]) => T {
+  public getClass<T extends Card>(this: T): new (...args: any[]) => T {
     return this.constructor as new (...args: any[]) => T;
   }
 
@@ -37,7 +37,7 @@ export default abstract class Card {
     return `${this.type}#${this.id.toString(16).padStart(4, '0')}`;
   }
 
-  public clone<T extends Card>(this: Readonly<T> | T, keepOrigin = true): T {
+  public clone<T extends Card>(this: T, keepOrigin = true): T {
     const c = Object.assign(new (this.getClass())() as T, this);
     if (keepOrigin) c.#origin = this as Card;
     return c;
@@ -47,7 +47,7 @@ export default abstract class Card {
     return Object.isFrozen(this);
   }
 
-  public getOriginal<T extends Card>(this: T | Readonly<T>): T | Readonly<T> {
+  public getOriginal<T extends Card>(this: T): T {
     let card = this as T;
     while (card.#origin) card = card.#origin as T;
     return card;
@@ -57,7 +57,7 @@ export default abstract class Card {
     return !this.#origin;
   }
 
-  public getOrigin<T extends Card>(this: T | Readonly<T>): T | Readonly<T> | undefined {
+  public getOrigin<T extends Card>(this: T): T | undefined {
     return (this as T).#origin as T | undefined;
   }
 

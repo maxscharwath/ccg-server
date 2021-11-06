@@ -8,10 +8,7 @@ export type LocalizedCard<T extends Card> = T & {name: string; text: string};
  * @param card The card to localize.
  * @param i18n The i18n object to use.
  */
-export default function localizeCard<T extends Card>(
-  card: T | Readonly<T>,
-  i18n: I18N
-): LocalizedCard<T> | Readonly<LocalizedCard<T>> {
+export default function localizeCard<T extends Card>(card: T, i18n: I18N): LocalizedCard<T> {
   const c = card.clone() as LocalizedCard<T>;
   Object.defineProperty(c, 'name', {get: () => i18n.t(`cards.${card.id}.name`), enumerable: true});
   Object.defineProperty(c, 'text', {get: () => i18n.t(`cards.${card.id}.text`), enumerable: true});
@@ -22,6 +19,6 @@ export default function localizeCard<T extends Card>(
  * Verifies that a card is a valid localized card.
  * @param card The card to verify.
  */
-localizeCard.isLocalizedCard = function <T extends Card>(card: LocalizedCard<T> | Readonly<LocalizedCard<T>>): boolean {
+localizeCard.isLocalizedCard = function <T extends Card>(card: LocalizedCard<T>): boolean {
   return card.name !== undefined && card.text !== undefined;
 };

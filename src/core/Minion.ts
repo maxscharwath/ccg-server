@@ -8,10 +8,10 @@ type ModifierFunction = (modifier: Modifier) => Partial<Modifier>;
  * Class Minion represent a Minion in the board
  */
 export default class Minion {
-  readonly #card: MinionCard | Readonly<MinionCard>;
+  readonly #card: MinionCard;
   private modifiers: ModifierFunction[] = [];
 
-  constructor(card: MinionCard | Readonly<MinionCard>) {
+  constructor(card: MinionCard) {
     this.#card = card;
   }
 
@@ -23,12 +23,12 @@ export default class Minion {
     return this.#card.health;
   }
 
-  static fromCard(card: Card | Readonly<Card>): Minion {
+  static fromCard(card: Card): Minion {
     if (card instanceof MinionCard) return new Minion(card);
     throw new SyntaxError(`Cannot create a minion with this card ${card.toString()}`);
   }
 
-  public getCard(): MinionCard | Readonly<MinionCard> {
+  public getCard(): MinionCard {
     return this.#card;
   }
 
