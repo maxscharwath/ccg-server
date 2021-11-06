@@ -3,9 +3,19 @@ import Card from '@core/cards/Card';
 import Minion from '@core/Minion';
 import MinionCard from '@core/cards/MinionCard';
 import SpellCard from '@core/cards/SpellCard';
+import Deck from '@core/deck/Deck';
+import Hand from '@core/hand/Hand';
 
-//todo
-type Player = string;
+class Player {
+  readonly deck: Deck;
+  readonly hand: Hand = new Hand();
+  mana = 0;
+  health = 30;
+
+  constructor() {
+    this.deck = new Deck();
+  }
+}
 
 type GameEvents = {
   start: () => void;
@@ -24,9 +34,9 @@ export default class Game extends EventEmitter<GameEvents> {
   #turnTimer!: NodeJS.Timeout;
   private startAt = 0;
 
-  constructor(...players: [Player, Player]) {
+  constructor() {
     super();
-    this.players = players;
+    this.players = [new Player(), new Player()];
   }
 
   public get round(): number {

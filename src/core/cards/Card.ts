@@ -1,5 +1,6 @@
-export type CardId = number;
+import * as crypto from 'crypto';
 
+export type CardId = number;
 export enum CardRarity {
   COMMON,
   RARE,
@@ -17,6 +18,12 @@ export default abstract class Card {
   public abstract readonly tag: string;
   public abstract readonly rarity: CardRarity;
   public abstract cost: number;
+  readonly #uuid = crypto.randomUUID();
+  #origin?: Card | Readonly<Card>;
+
+  get uuid() {
+    return this.#uuid;
+  }
 
   public equals(card: Card): boolean {
     return card.id === this.id;
@@ -30,17 +37,36 @@ export default abstract class Card {
     return `${this.type}#${this.id.toString(16).padStart(4, '0')}`;
   }
 
-  public clone<T extends Card>(this: Readonly<T> | T): T {
-    return Object.assign(new (this.getClass())() as T, this);
+  public clone<T extends Card>(this: Readonly<T> | T, keepOrigin = true): T {
+    const c = Object.assign(new (this.getClass())() as T, this);
+    if (keepOrigin) c.#origin = this as Card;
+    return c;
   }
 
   public isReadonly(): boolean {
     return Object.isFrozen(this);
   }
 
+  public getOriginal<T extends Card>(this: T | Readonly<T>): T | Readonly<T> {
+    let card = this as T;
+    while (card.#origin) card = card.#origin as T;
+    return card;
+  }
+
+  public isOriginal(): boolean {
+    return !this.#origin;
+  }
+
+  public getOrigin<T extends Card>(this: T | Readonly<T>): T | Readonly<T> | undefined {
+    return (this as T).#origin as T | undefined;
+  }
+
   public toJSON(): object {
     return {
       ...this,
+      uuid: this.uuid,
+      original: this.getOriginal().uuid,
+      class: this.getClass().name,
     };
   }
 }

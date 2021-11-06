@@ -9,7 +9,7 @@ type LocaleData = {
   [key: string]: LocaleData | string | number | boolean;
 };
 type IsoLocale<L extends string = string, C extends string = string> = `${L}-${C}` | `${L}`;
-type YamlFile<L extends string = string, C extends string = string> = LocaleData & {
+type LocaleFile<L extends string = string, C extends string = string> = LocaleData & {
   info: {locale: IsoLocale<L, C>; version: string};
 };
 type FormatLocale<L extends string = string, C extends string = string> = {
@@ -37,7 +37,7 @@ class Locale<L extends string = string> {
     };
   }
 
-  public add({info, ...data}: YamlFile<L>): boolean {
+  public add({info, ...data}: LocaleFile<L>): boolean {
     const {locale, language} = Locale.formatLocale(info.locale);
     if (language !== this.language) return false;
     this.#locales.set(locale, merge(this.#locales.get(locale) ?? {}, data));
@@ -78,6 +78,13 @@ export default class I18N {
     return this.#locales.get(l.language)?.getData(l.locale) ?? {};
   }
 
+  #addLocaleData(localeFile: LocaleFile) {
+    const {language} = Locale.formatLocale(localeFile.info.locale);
+    if (!this.#locales.has(language)) this.#locales.set(language, new Locale(language));
+    const locale = this.#locales.get(language) as Locale;
+    locale.add(localeFile);
+  }
+
   constructor(private localesPath: string, defaultLocale: IsoLocale) {
     this.#locale = Locale.formatLocale(defaultLocale);
   }
@@ -93,11 +100,8 @@ export default class I18N {
     await Promise.allSettled(
       files.map(async file => {
         const yamlFile = await fs.promises.readFile(file, 'utf8');
-        const yaml = YAML.parse(yamlFile) as YamlFile;
-        const {language} = Locale.formatLocale(yaml.info.locale);
-        if (!this.#locales.has(language)) this.#locales.set(language, new Locale(language));
-        const locale = this.#locales.get(language) as Locale;
-        locale.add(yaml);
+        const yaml = YAML.parse(yamlFile) as LocaleFile;
+        this.#addLocaleData(yaml);
       })
     );
   }

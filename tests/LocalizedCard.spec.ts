@@ -37,7 +37,6 @@ describe('Test LocalizedCard', () => {
     const mutableLocalizedCard = localizeCard(card, i18n);
     const json = mutableLocalizedCard.toJSON();
     expect(json).toBeInstanceOf(Object);
-    expect(json).toMatchObject(card.toJSON());
     expect(json).toHaveProperty('name');
     expect(json).toHaveProperty('text');
   });

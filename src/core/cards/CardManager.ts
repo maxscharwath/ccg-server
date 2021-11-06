@@ -115,7 +115,7 @@ export default class CardManager {
    * @returns The card
    */
   public getMutableCardById<T extends Card>(id: number): T {
-    return this.getCardById(id).clone() as T;
+    return this.getCardById(id).clone(false) as T;
   }
 
   /**
@@ -124,6 +124,14 @@ export default class CardManager {
    * @returns The mutable card.
    */
   public getMutableCard<T extends Card>(card: Readonly<T> | T): T {
-    return card.clone() as T;
+    return card.isReadonly() ? card.clone(false) : card;
+  }
+
+  /**
+   * Verify if a card exists.
+   * @param id The id of the card.
+   */
+  public hasCardId(id: number): boolean {
+    return this.cards.has(id);
   }
 }

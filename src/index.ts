@@ -4,6 +4,7 @@ import Server from '@core/Server';
 import Game from '@core/Game';
 import {Log} from '@core/misc/Logger';
 import localizeCard from '@core/cards/LocalizedCard';
+import DeckManager from '@core/deck/DeckManager';
 
 (async () => {
   const i18n = new I18N('./locales/', 'fr-fr');
@@ -21,8 +22,9 @@ import localizeCard from '@core/cards/LocalizedCard';
       cards,
     };
   });
-
-  const game = new Game('player1', 'player2');
+  const deck = DeckManager.fromCode('AAEDAQICAgMCAA', cardManager);
+  console.log(deck);
+  const game = new Game();
   game.on('*', (event, params) => {
     Log.info(event, params);
     server.ws.clients.forEach(client => {

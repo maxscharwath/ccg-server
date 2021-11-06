@@ -12,7 +12,7 @@ export default class ArrayCapacity<T> extends Array<T> {
    * The maximum number of elements.
    * @readonly
    */
-  public readonly capacity: number;
+  public readonly capacity!: number;
 
   /**
    * Constructor of ArrayCapacity.
@@ -27,7 +27,12 @@ export default class ArrayCapacity<T> extends Array<T> {
   constructor(capacity: number, ...items: T[]);
   constructor(capacity: number, ...items: T[]) {
     super(...items.slice(0, capacity));
-    this.capacity = capacity;
+    Object.defineProperty(this, 'capacity', {
+      value: capacity,
+      writable: false,
+      enumerable: false,
+      configurable: false,
+    });
     //using Proxy to handle index accessor
     return new Proxy(this, {
       set: (target, key, value) => {
