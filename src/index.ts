@@ -10,6 +10,7 @@ import localizeCard from '@core/cards/LocalizedCard';
   await i18n.load();
   Log.info('I18N catalog', i18n.getCatalog());
   Log.info('I18N locale', i18n.getLocale());
+  i18n.verifyMissingKey();
   const cardManager = new CardManager();
   await cardManager.load();
   const server = new Server();
