@@ -179,23 +179,22 @@ export default class I18N {
     const merged = allLocales.reduce((previousValue, currentValue) => {
       return merge(previousValue, currentValue[1]);
     }, {});
-    const getMissingKeys = (A: Object, B: Object): string[] => {
+    const getMissingKeys = (locale: Object): string[] => {
       const missingKeys: string[] = [];
-      const iterate = (a: Object, b: Object, prefix = '') => {
+      const iterate = (a: Object, b?: Object, prefix = '') => {
         for (const key in a) {
           const currentKey = prefix + key;
-          if (!(key in b)) {
-            missingKeys.push(currentKey);
-            continue;
+          if (typeof a[key] === 'object') iterate(a[key], (b ?? {})[key], currentKey + '.');
+          else {
+            if (!b || !(key in b)) missingKeys.push(currentKey);
           }
-          if (typeof a[key] === 'object') iterate(a[key], b[key], currentKey + '.');
         }
       };
-      iterate(A, B);
+      iterate(merged, locale);
       return missingKeys;
     };
     allLocales.forEach(locale => {
-      const missingKeys = getMissingKeys(merged, locale[1]);
+      const missingKeys = getMissingKeys(locale[1]);
       if (missingKeys.length > 0) {
         Log.warn(`Missing keys for locale "${locale[0]}"`, missingKeys);
       } else {
