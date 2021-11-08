@@ -21,7 +21,7 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    * @param event The name of the event.
    * @param params The parameters of the event.
    */
-  override emit<K extends EventKey<T>>(event: K, ...params: Parameters<T[K]>): boolean {
+  public override emit<K extends EventKey<T>>(event: K, ...params: Parameters<T[K]>): boolean {
     if (event === '*') {
       throw new Error("Event '*' can be emitted");
     }
@@ -34,7 +34,7 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    * @param event The name of the event.
    * @param listener The listener to remove.
    */
-  override removeListener<K extends EventKey<T>>(event: K, listener: EventMapImproved<T>[K]): this {
+  public override removeListener<K extends EventKey<T>>(event: K, listener: EventMapImproved<T>[K]): this {
     return super.removeListener(event, listener);
   }
 
@@ -42,7 +42,7 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    * Remove all listeners of a specific event.
    * @param event The name of the event.
    */
-  override removeAllListeners<K extends EventKey<T>>(event?: K): this {
+  public override removeAllListeners<K extends EventKey<T>>(event?: K): this {
     return super.removeAllListeners(event);
   }
 
@@ -50,7 +50,7 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    * Returns a copy of the array of listeners for a specific event.
    * @param event The name of the event.
    */
-  override listeners<K extends EventKey<T>>(event: K): Function[] {
+  public override listeners<K extends EventKey<T>>(event: K): Function[] {
     return super.listeners(event);
   }
 
@@ -58,7 +58,7 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    * Returns a copy of the array of listeners for a specific event, including any wrappers (such as those created by .once()).
    * @param event The name of the event.
    */
-  override rawListeners<K extends EventKey<T>>(event: K): Function[] {
+  public override rawListeners<K extends EventKey<T>>(event: K): Function[] {
     return super.rawListeners(event);
   }
 
@@ -66,7 +66,7 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    * Returns the number of listeners for a specific event.
    * @param event The name of the event.
    */
-  override listenerCount<K extends EventKey<T>>(event: K): number {
+  public override listenerCount<K extends EventKey<T>>(event: K): number {
     return super.listenerCount(event);
   }
 
@@ -75,7 +75,7 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    * @param event The name of the event.
    * @param listener The listener to add.
    */
-  override prependListener<K extends EventKey<T>>(event: K, listener: EventMapImproved<T>[K]): this {
+  public override prependListener<K extends EventKey<T>>(event: K, listener: EventMapImproved<T>[K]): this {
     return super.prependListener(event, listener);
   }
 
@@ -84,7 +84,7 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    * @param event The name of the event.
    * @param listener The listener to add.
    */
-  override prependOnceListener<K extends EventKey<T>>(event: K, listener: EventMapImproved<T>[K]): this {
+  public override prependOnceListener<K extends EventKey<T>>(event: K, listener: EventMapImproved<T>[K]): this {
     return super.prependOnceListener(event, listener);
   }
 
@@ -93,7 +93,7 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    * @param event The name of the event.
    * @param listener The listener to add.
    */
-  override addListener<K extends EventKey<T>>(event: K, listener: EventMapImproved<T>[K]) {
+  public override addListener<K extends EventKey<T>>(event: K, listener: EventMapImproved<T>[K]) {
     return super.addListener(event, listener);
   }
 
@@ -102,7 +102,7 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    * @param event The name of the event.
    * @param listener The listener to add.
    */
-  override on<K extends EventKey<T>>(event: K, listener: EventMapImproved<T>[K]): this {
+  public override on<K extends EventKey<T>>(event: K, listener: EventMapImproved<T>[K]): this {
     return super.on(event, listener);
   }
 
@@ -111,7 +111,7 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    * @param event The name of the event.
    * @param listener The listener to add.
    */
-  override once<K extends EventKey<T>>(event: K, listener: T[K]) {
+  public override once<K extends EventKey<T>>(event: K, listener: T[K]) {
     return super.once(event, listener);
   }
 
@@ -121,7 +121,7 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    * @param event The name of the event.
    * @param listener The listener to remove.
    */
-  override off<K extends EventKey<T>>(event: K, listener: EventMapImproved<T>[K]): this {
+  public override off<K extends EventKey<T>>(event: K, listener: EventMapImproved<T>[K]): this {
     return super.off(event, listener);
   }
 }

@@ -24,7 +24,18 @@ type Data = {
   rawOutput: Readonly<string>;
   date: Date;
 };
-type Transport = (data: Data, options: Options) => void;
+type Transport = (data: Data, options: TransportOptions) => Promise<void>;
+
+type TransportOptions = Options & {
+  /**
+   * Resolve when all previous logs transports have been resolved.
+   */
+  ready: Promise<void>;
+  /**
+   * Resolve when the same previous logs transport has been resolved.
+   */
+  transportReady: Promise<void>;
+};
 export type Options = {
   name?: string;
   format: string;
@@ -35,6 +46,7 @@ export type Options = {
 
 export default class Logger {
   readonly #options: Options;
+  #prevLogTransports: Promise<void>[] = [];
 
   constructor(options: Partial<Options> = {}) {
     this.#options = {
@@ -46,10 +58,10 @@ export default class Logger {
     };
   }
 
-  static TRANSPORTS = {
+  public static TRANSPORTS = {
     DATED_LOG:
       (...subFolders: string[]) =>
-      async (data: Data, options: Options) => {
+      async (data: Data, options: TransportOptions) => {
         const filePrefix = options.name ? `${options.name}-` : '';
         const file = path.join(
           process.cwd(),
@@ -58,19 +70,25 @@ export default class Logger {
           `${filePrefix}${format(data.date, 'YYYY-MM-DD')}.log`
         );
         await fs.promises.mkdir(path.dirname(file), {recursive: true});
+        await options.transportReady;
         await fs.promises.appendFile(file, `${data.output}\n`);
       },
     NAME_LOG:
       (...subFolders: string[]) =>
-      async (data: Data, options: Options) => {
+      async (data: Data, options: TransportOptions) => {
         const file = path.join(process.cwd(), options.logFolder, ...subFolders, `${options.name ?? 'default'}`);
         await fs.promises.mkdir(path.dirname(file), {recursive: true});
+        await options.transportReady;
         await fs.promises.appendFile(file, `${data.output}\n`);
       },
     CONSOLE_LOG: () => async (data: Data) => {
       if (data.level === 'warn') console.warn(data.output);
       else if (data.level === 'error') console.error(data.output);
       else console.log(data.output);
+    },
+    SIMULATE_LAG: (time: number) => async (data: Data, options: TransportOptions) => {
+      await options.ready;
+      await new Promise(resolve => setTimeout(resolve, time));
     },
   };
 
@@ -132,7 +150,14 @@ export default class Logger {
       stack,
       output,
     };
-    this.#options.transports.forEach(transport => transport(data, {...this.#options}));
+    //to keep the order of transports
+    this.#prevLogTransports = this.#options.transports.map((transport, index) =>
+      transport(data, {
+        ...this.#options,
+        ready: Promise.allSettled(this.#prevLogTransports).then(),
+        transportReady: this.#prevLogTransports[index],
+      })
+    );
     return data;
   }
 }

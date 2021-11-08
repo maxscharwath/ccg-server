@@ -37,7 +37,7 @@ export default class ArrayCapacity<T> extends Array<T> {
     return new Proxy(this, {
       set: (target, key, value) => {
         const index = Number(key);
-        if (Number.isNaN(index) || index < this.capacity) {
+        if (Number.isNaN(index) || (index >= 0 && index < this.capacity)) {
           target[key] = value;
         }
         return true;
@@ -51,7 +51,7 @@ export default class ArrayCapacity<T> extends Array<T> {
    * @param capacity The maximum number of elements.
    * @returns A new ArrayCapacity instance.
    */
-  static override from<T>(arrayLike: ArrayLike<T>, capacity: number): ArrayCapacity<T> {
+  public static override from<T>(arrayLike: ArrayLike<T>, capacity: number): ArrayCapacity<T> {
     return new ArrayCapacity<T>(capacity, ...Array.from(arrayLike));
   }
 
@@ -61,19 +61,23 @@ export default class ArrayCapacity<T> extends Array<T> {
    * @param items A set of elements to include in the new ArrayCapacity object.
    * @returns A new ArrayCapacity instance.
    */
-  static override of<T>(capacity: number, ...items: T[]): ArrayCapacity<T> {
+  public static override of<T>(capacity: number, ...items: T[]): ArrayCapacity<T> {
     return new ArrayCapacity<T>(capacity, ...items);
   }
 
-  override push(...items: T[]): number {
+  public override push(...items: T[]): number {
     return super.push(...items.slice(0, this.capacity - this.length));
   }
 
-  override unshift(...items: T[]): number {
+  public override unshift(...items: T[]): number {
     return super.unshift(...items.slice(0, this.capacity - this.length));
   }
 
-  override splice(start: number, deleteCount: number, ...items: T[]): T[] {
+  public pushAt(index: number, ...items: T[]): T[] {
+    return this.splice(index, 0, ...items);
+  }
+
+  public override splice(start: number, deleteCount: number, ...items: T[]): T[] {
     return super.splice(start, deleteCount, ...items.slice(0, this.capacity - this.length + deleteCount));
   }
 

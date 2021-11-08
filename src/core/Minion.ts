@@ -1,5 +1,6 @@
 import MinionCard from '@core/cards/MinionCard';
 import Card from '@core/cards/Card';
+import Target from '@core/Target';
 
 type Modifier = {attack: number; health: number};
 type ModifierFunction = (modifier: Modifier) => Partial<Modifier>;
@@ -7,23 +8,20 @@ type ModifierFunction = (modifier: Modifier) => Partial<Modifier>;
 /**
  * Class Minion represent a Minion in the board
  */
-export default class Minion {
+export default class Minion extends Target {
   readonly #card: MinionCard;
-  private modifiers: ModifierFunction[] = [];
+  public health: number;
+  public attack: number;
+  #modifiers: ModifierFunction[] = [];
 
   constructor(card: MinionCard) {
+    super();
     this.#card = card;
+    this.health = card.health;
+    this.attack = card.attack;
   }
 
-  public get attack(): number {
-    return this.#card.attack;
-  }
-
-  public get health(): number {
-    return this.#card.health;
-  }
-
-  static fromCard(card: Card): Minion {
+  public static fromCard(card: Card): Minion {
     if (card instanceof MinionCard) return new Minion(card);
     throw new SyntaxError(`Cannot create a minion with this card ${card.toString()}`);
   }
@@ -32,13 +30,19 @@ export default class Minion {
     return this.#card;
   }
 
-  public addModifier(...modifiers: ModifierFunction[]) {
-    this.modifiers.push(...modifiers);
-    return this;
+  public addModifier(modifier: ModifierFunction): ModifierFunction {
+    this.#modifiers.push(modifier);
+    return modifier;
+  }
+
+  public removeModifier(modifier: ModifierFunction): ModifierFunction {
+    const index = this.#modifiers.indexOf(modifier);
+    if (index !== -1) this.#modifiers.splice(index, 1);
+    return modifier;
   }
 
   public applyModifier(): Modifier {
-    return this.modifiers.reduce((p: Modifier, c) => ({...p, ...c(p)}), {
+    return this.#modifiers.reduce((p: Modifier, c) => ({...p, ...c(p)}), {
       attack: this.attack,
       health: this.health,
     });

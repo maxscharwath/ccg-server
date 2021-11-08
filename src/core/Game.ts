@@ -3,24 +3,14 @@ import Card from '@core/cards/Card';
 import Minion from '@core/Minion';
 import MinionCard from '@core/cards/MinionCard';
 import SpellCard from '@core/cards/SpellCard';
-import Deck from '@core/deck/Deck';
-import Hand from '@core/hand/Hand';
-
-class Player {
-  readonly deck: Deck;
-  readonly hand: Hand = new Hand();
-  mana = 0;
-  health = 30;
-
-  constructor() {
-    this.deck = new Deck();
-  }
-}
+import Player from '@core/Player';
+import Target from '@core/Target';
+import Board from '@core/Board';
 
 type GameEvents = {
   start: () => void;
-  turn: (player: Player) => void;
-  round: () => void;
+  turn: (turn: number, player: Player) => void;
+  round: (round: number) => void;
   skipTurn: (player: Player) => void;
   cardPlayed: (card: Card, player: Player) => void;
   minionAdded: (minion: Minion) => void;
@@ -30,9 +20,9 @@ type GameEvents = {
 export default class Game extends EventEmitter<GameEvents> {
   public turn = 0;
   public readonly players: [Player, Player];
-  public readonly boards: [Minion[], Minion[]] = [[], []];
+  public readonly boards: [Board, Board] = [new Board(), new Board()];
   #turnTimer!: NodeJS.Timeout;
-  private startAt = 0;
+  #startAt = 0;
 
   constructor() {
     super();
@@ -48,32 +38,33 @@ export default class Game extends EventEmitter<GameEvents> {
   }
 
   public start() {
-    this.startAt = Date.now();
+    this.#startAt = Date.now();
     this.#onMain();
   }
 
   #onMain() {
     this.emit('start');
-    this.#onTurn(this.currentPlayer);
+    this.turn = -1;
+    this.nextTurn();
   }
 
   #onTurn(player: Player) {
     clearTimeout(this.#turnTimer);
     this.#turnTimer = setTimeout(() => this.nextTurn(), 75_000);
-    this.emit('turn', player);
+    this.emit('turn', this.turn, player);
   }
 
   private nextTurn() {
     this.turn++;
     if (this.turn % 2 === 0) {
-      this.emit('round');
+      this.emit('round', this.round);
     }
     this.#onTurn(this.currentPlayer);
   }
 
   public skipTurn() {
     this.emit('skipTurn', this.currentPlayer);
-    this.nextTurn();
+    setImmediate(() => this.nextTurn());
   }
 
   public playCard(card: Card, player: Player) {
@@ -97,7 +88,9 @@ export default class Game extends EventEmitter<GameEvents> {
     this.emit('minionAdded', minion);
   }
 
-  private castSpell(card: SpellCard, player: Player) {
-    card.onCast();
+  private castSpell(card: SpellCard, target: Target): boolean {
+    return card.onCast({
+      target,
+    });
   }
 }

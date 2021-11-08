@@ -21,7 +21,7 @@ export default abstract class Card {
   readonly #uuid = crypto.randomUUID();
   #origin?: Card;
 
-  get uuid() {
+  public get uuid() {
     return this.#uuid;
   }
 

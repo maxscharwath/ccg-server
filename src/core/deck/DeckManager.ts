@@ -9,9 +9,9 @@ import CardManager from '@core/cards/CardManager';
 export type CardTuple = [CardId, number];
 
 export default class DeckManager {
-  static readonly VERSION = 0x1;
+  public static readonly VERSION = 0x1;
 
-  static fromCode(code: string, cardManager: CardManager): Deck {
+  public static fromCode(code: string, cardManager: CardManager): Deck {
     return this.parse(code).reduce((deck, cardTuple) => {
       const [cardId, occurrence] = cardTuple;
       for (let i = 0; i < occurrence; i++) {

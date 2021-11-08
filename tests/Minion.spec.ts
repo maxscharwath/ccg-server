@@ -22,15 +22,13 @@ describe('Minion', () => {
       attack: card.attack,
       health: card.health,
     });
-    minion.addModifier(
-      modifier => ({
-        attack: modifier.attack / 2,
-        health: modifier.health + 2,
-      }),
-      modifier => ({
-        health: modifier.health - 5,
-      })
-    );
+    minion.addModifier(modifier => ({
+      attack: modifier.attack / 2,
+      health: modifier.health + 2,
+    }));
+    minion.addModifier(modifier => ({
+      health: modifier.health - 5,
+    }));
     expect(minion.applyModifier()).toStrictEqual({
       attack: card.attack / 2,
       health: card.health + 2 - 5,

@@ -21,10 +21,10 @@ describe('CardManager', () => {
     const cardManager = new CardManager();
     expect(cardManager.countCards()).toBe(0);
     class TestSpellCard extends SpellCard {
-      cost = 2;
-      id = 1;
-      tag = 'test_card';
-      rarity = CardRarity.RARE;
+      public cost = 2;
+      public id = 1;
+      public tag = 'test_card';
+      public rarity = CardRarity.RARE;
     }
     const card = cardManager.addCard(TestSpellCard);
     expect(card).toBeInstanceOf(Card);
@@ -45,12 +45,12 @@ describe('CardManager', () => {
     beforeAll(async () => {
       cardManager.addCard(
         class TestCard extends MinionCard {
-          attack = 1;
-          cost = 2;
-          health = 3;
-          id = 1;
-          tag = 'test_card';
-          rarity = CardRarity.RARE;
+          public attack = 1;
+          public cost = 2;
+          public health = 3;
+          public id = 1;
+          public tag = 'test_card';
+          public rarity = CardRarity.RARE;
         }
       );
       expect(cardManager.countCards()).toBe(1);

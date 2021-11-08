@@ -2,33 +2,30 @@ import MinionCard from '@core/cards/MinionCard';
 import SpellCard from '@core/cards/SpellCard';
 import {CardRarity} from '@core/cards/Card';
 export class KingKrushCard extends MinionCard {
-  id = 1;
-  attack = 8;
-  cost = 9;
-  health = 8;
-  tag = 'king_krush';
-  rarity = CardRarity.LEGENDARY;
+  public id = 1;
+  public attack = 8;
+  public cost = 9;
+  public health = 8;
+  public tag = 'king_krush';
+  public rarity = CardRarity.LEGENDARY;
 }
 
 export class TheCoinCard extends SpellCard {
-  id = 2;
-  cost = 9;
-  tag = 'the_coin';
-  rarity = CardRarity.COMMON;
-
-  override onCast() {
-    super.onCast();
-    //todo give one mana.
-  }
+  public id = 2;
+  public cost = 9;
+  public tag = 'the_coin';
+  public rarity = CardRarity.COMMON;
 }
 export class PoisonCard extends SpellCard {
-  id = 3;
-  cost = 2;
-  tag = 'poison';
-  rarity = CardRarity.COMMON;
+  public id = 3;
+  public cost = 2;
+  public tag = 'poison';
+  public rarity = CardRarity.COMMON;
+}
 
-  override onCast() {
-    super.onCast();
-    //todo give poison effect to all enemy board.
-  }
+export class HealthBoostCard extends SpellCard {
+  public id = 4;
+  public cost = 2;
+  public tag = 'health_boost';
+  public rarity = CardRarity.COMMON;
 }

@@ -29,7 +29,7 @@ export class BufferWriter extends Iterator {
   /**
    * @returns The buffer as Buffer
    */
-  get buffer(): Buffer {
+  public get buffer(): Buffer {
     return Buffer.from(this.#buffer);
   }
 
