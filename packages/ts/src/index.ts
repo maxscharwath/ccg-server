@@ -11,7 +11,11 @@ export type Options = {
  * @returns The transformed template string.
  * @author Maxime Scharwath
  */
-export default (template: string, data: unknown[] | Record<string, unknown>, options: Partial<Options> = {}) => {
+export default function ts(
+  template: string,
+  data: unknown[] | Record<string, unknown>,
+  options: Partial<Options> = {}
+) {
   const opts: Options = {
     transform: ({value}) => value,
     ...options,
@@ -25,4 +29,4 @@ export default (template: string, data: unknown[] | Record<string, unknown>, opt
     const transformedValue = opts.transform({value, key});
     return transformedValue === undefined ? opts.placeholder ?? placeholder : String(transformedValue);
   });
-};
+}

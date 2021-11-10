@@ -1,4 +1,4 @@
-import Logger from '../src/core/misc/Logger';
+import Logger from '../src';
 
 describe('Logger', () => {
   const Log = new Logger();

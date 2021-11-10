@@ -1,5 +1,5 @@
 import Card, {CardRarity} from '@core/cards/Card';
-import ArrayCapacity from '@core/misc/ArrayCapacity';
+import ArrayCapacity from '@studimax/array-capacity';
 
 /**
  * Class Deck represent a Stack of Cards

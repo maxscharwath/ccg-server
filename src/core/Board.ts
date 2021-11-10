@@ -1,5 +1,5 @@
-import ArrayCapacity from '@core/misc/ArrayCapacity';
 import Minion from '@core/Minion';
+import ArrayCapacity from '@studimax/array-capacity';
 
 export default class Board extends ArrayCapacity<Minion> {
   static readonly #MAX_MINIONS = 7;

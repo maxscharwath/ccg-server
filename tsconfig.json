@@ -3,7 +3,7 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "rootDir": ".",
-    "outDir": "dist",
+    "outDir": "build",
     "allowSyntheticDefaultImports": true,
     "noImplicitOverride": true,
     "suppressImplicitAnyIndexErrors": true,
@@ -23,8 +23,6 @@
       "@locales/*": ["locales/*"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "test/**/*.ts"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["**/*.spec.ts"]
 }

@@ -2,7 +2,7 @@ import I18N from '@core/misc/I18N';
 import CardManager from '@core/cards/CardManager';
 import Server from '@core/Server';
 import Game from '@core/Game';
-import {Log} from '@core/misc/Logger';
+import {Log} from '@studimax/logger';
 import localizeCard from '@core/cards/LocalizedCard';
 import Minion from '@core/Minion';
 
@@ -27,9 +27,6 @@ import Minion from '@core/Minion';
   minion.attackTarget(minion);
   console.log(JSON.stringify(minion));
   const game = new Game();
-  game.on('turn', () => {
-    game.skipTurn();
-  });
   game.on('*', (event, params) => {
     Log.info(event, params);
     server.ws.clients.forEach(client => {

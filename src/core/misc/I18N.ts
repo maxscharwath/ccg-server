@@ -3,7 +3,7 @@ import * as YAML from 'yaml';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as merge from 'deepmerge';
-import {Log} from '@core/misc/Logger';
+import {Log} from '@studimax/logger';
 
 type LocaleData = {
   [key: string]: LocaleData | string | number | boolean;

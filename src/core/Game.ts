@@ -1,4 +1,3 @@
-import {EventEmitter} from '@core/misc/Event';
 import Card from '@core/cards/Card';
 import Minion from '@core/Minion';
 import MinionCard from '@core/cards/MinionCard';
@@ -6,6 +5,7 @@ import SpellCard from '@core/cards/SpellCard';
 import Player from '@core/Player';
 import Target from '@core/Target';
 import Board from '@core/Board';
+import {EventEmitter} from '@studimax/event';
 
 type GameEvents = {
   start: () => void;

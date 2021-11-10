@@ -1,5 +1,5 @@
 import Card from '@core/cards/Card';
-import ArrayCapacity from '@core/misc/ArrayCapacity';
+import ArrayCapacity from '@studimax/array-capacity';
 
 export default class Hand extends ArrayCapacity<Card> {
   static #MAX_CARDS = 10;

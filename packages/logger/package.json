@@ -1,0 +1,23 @@
+{
+  "name": "@studimax/logger",
+  "description": "A simple log system with configurable transporters",
+  "license": "MIT",
+  "author": {
+    "name": "Maxime Scharwath",
+    "email": "maxime@studimax.ch"
+  },
+  "version": "1.0.0",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc",
+    "clean": "tsc --build --clean"
+  },
+  "dependencies": {
+    "fecha": "^4.2.1",
+    "@studimax/ts": "1.0.0"
+  },
+  "main": "src",
+  "engines": {
+    "node": ">=12.9.0"
+  }
+}

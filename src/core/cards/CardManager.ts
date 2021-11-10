@@ -1,7 +1,7 @@
 import * as fg from 'fast-glob';
 import Card from '@core/cards/Card';
 import {cardsDataFolder} from '@data/cards';
-import {Log} from '@core/misc/Logger';
+import {Log} from '@studimax/logger';
 
 export type ReadonlyCard<T extends Card> = Readonly<T> & T;
 /**

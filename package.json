@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "ccg-server",
   "version": "0.0.0",
   "description": "A multiplayer collectible card game server",
@@ -6,7 +7,6 @@
     "name": "Maxime Scharwath",
     "email": "maxscharwath@gmail.com"
   },
-  "main": "src/index.js",
   "files": [
     "src"
   ],
@@ -15,12 +15,13 @@
   "scripts": {
     "test": "jest",
     "lint": "gts lint --fix '**/*.ts'",
-    "clean": "gts clean",
+    "clean": "yarn workspaces run clean & gts clean --project tsconfig.build.json",
     "start": "ts-node -r tsconfig-paths/register ./src/index.ts",
     "fix": "gts fix --fix '**/*.ts'",
     "prepare": "husky install",
-    "build": "tsc --project tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./dist/src",
-    "dockerize": "docker build -t ccg-server ."
+    "build": "yarn clean & yarn workspaces run build & tsc --project tsconfig.build.json && tscpaths -p tsconfig.json -s ./src -o ./build",
+    "dockerize": "docker build -t ccg-server .",
+    "start:prod": "node build/index.js"
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",
@@ -30,21 +31,26 @@
     "husky": "^7.0.4",
     "jest": "^27.3.1",
     "ts-jest": "^27.0.7",
-    "ts-node": "^10.3.0",
     "tsconfig-paths": "^3.11.0",
     "tscpaths": "^0.0.9",
     "typescript": "^4.4.4"
   },
   "dependencies": {
+    "@studimax/array-capacity": "1.0.0",
+    "@studimax/event": "1.0.0",
+    "@studimax/logger": "1.0.0",
     "deepmerge": "^4.2.2",
     "fast-glob": "^3.2.7",
     "fastify": "^3.22.1",
-    "fecha": "^4.2.1",
+    "ts-node": "^10.4.0",
     "ws": "^8.2.3",
     "yaml": "^2.0.0-8"
   },
   "engines": {
     "node": ">=14.0.0"
   },
+  "workspaces": [
+    "./packages/*"
+  ],
   "repository": "https://github.com/maxscharwath/ccg-server.git"
 }
