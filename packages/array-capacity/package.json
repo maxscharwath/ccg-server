@@ -1,19 +1,19 @@
 {
   "name": "@studimax/array-capacity",
+  "version": "1.0.0",
   "description": "A fully extended Array with max capacity",
   "license": "MIT",
   "author": {
     "name": "Maxime Scharwath",
     "email": "maxime@studimax.ch"
   },
-  "version": "1.0.0",
+  "main": "src",
   "scripts": {
-    "test": "jest",
     "build": "tsc",
-    "clean": "tsc --build --clean"
+    "clean": "tsc --build --clean",
+    "test": "jest"
   },
   "dependencies": {},
-  "main": "src",
   "engines": {
     "node": ">=12.9.0"
   }
