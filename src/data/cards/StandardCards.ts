@@ -1,6 +1,7 @@
 import MinionCard from '@core/cards/MinionCard';
 import SpellCard from '@core/cards/SpellCard';
 import {CardRarity} from '@core/cards/Card';
+
 export class KingKrushCard extends MinionCard {
   public id = 1;
   public attack = 8;
