@@ -31,11 +31,10 @@
     "@studimax/array-capacity": "1.0.0",
     "@studimax/event": "1.0.0",
     "@studimax/logger": "1.0.0",
+    "@studimax/server": "1.0.0",
     "deepmerge": "^4.2.2",
     "fast-glob": "^3.2.7",
-    "fastify": "^3.22.1",
     "ts-node": "^10.4.0",
-    "ws": "^8.2.3",
     "yaml": "^2.0.0-8"
   },
   "devDependencies": {

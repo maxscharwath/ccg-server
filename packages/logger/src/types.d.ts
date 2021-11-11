@@ -38,5 +38,6 @@ export type Options = {
   format: string;
   dateFormat: string;
   logFolder: string;
+  logHistory: number;
   transports: Transport[];
 };

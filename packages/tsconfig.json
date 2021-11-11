@@ -6,6 +6,9 @@
     "composite": true,
     "declarationMap": true,
     "target": "ESNext",
-    "useDefineForClassFields": true
+    "useDefineForClassFields": true,
+    "lib": [
+      "es2020"
+    ]
   }
 }

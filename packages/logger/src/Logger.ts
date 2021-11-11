@@ -14,12 +14,14 @@ import ts from '@studimax/ts';
 export default class Logger {
   readonly #options: Options;
   #prevLogTransports: Promise<void>[] = [];
+  public logHistory: LogData[] = [];
 
   constructor(options: Partial<Options> = {}) {
     this.#options = {
       format: '{timestamp}\t<{level}>\t{file}:{line}\t({method})\t{message} {metadata}',
       dateFormat: 'YYYY-MM-DD HH:mm:ss.SS',
       logFolder: 'logs',
+      logHistory: 100,
       transports: [],
       transportTimeout: 1000,
       ...options,
@@ -109,6 +111,8 @@ export default class Logger {
           .finally(() => clearTimeout(timeout));
       });
     });
-    return {...data, done: Promise.allSettled(this.#prevLogTransports).then(() => {})};
+    const logData = {...data, done: Promise.allSettled(this.#prevLogTransports).then(() => {})};
+    this.logHistory = [logData, ...this.logHistory].slice(0, this.#options.logHistory);
+    return logData;
   }
 }

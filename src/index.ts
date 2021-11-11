@@ -1,10 +1,11 @@
 import I18N from '@core/misc/I18N';
 import CardManager from '@core/cards/CardManager';
-import Server from '@core/Server';
+import Server from '@studimax/server';
 import Game from '@core/Game';
 import {Log} from '@studimax/logger';
 import localizeCard from '@core/cards/LocalizedCard';
 import Minion from '@core/Minion';
+import {BodyParser} from '@studimax/server/src/Server';
 
 (async () => {
   const i18n = new I18N('./locales/', 'fr-fr');
@@ -15,13 +16,12 @@ import Minion from '@core/Minion';
   const cardManager = new CardManager();
   await cardManager.load();
   const server = new Server();
-  server.fastify.get('/', async (request, reply) => {
-    reply.type('application/json').code(200);
-    const cards = cardManager.getCards().map(card => localizeCard(card, i18n));
-    return {
-      cards,
-    };
-  });
+  server
+    .use(BodyParser)
+    .get('/routes/:method?', ({params}) => server.getRoutes(params.method).map(({method, path}) => ({method, path})))
+    .get('/', () => cardManager.getCards().map(card => localizeCard(card, i18n)))
+    .get('/log', () => Log.logHistory.map((log, i) => `[${i}]\t${log.output}`).join('\n'))
+    .post('/game', request => request.body);
   const minion = Minion.fromCard(cardManager.getCardById(1));
   console.log(JSON.stringify(minion));
   minion.attackTarget(minion);
