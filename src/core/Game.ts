@@ -6,15 +6,18 @@ import Player from '@core/Player';
 import Target from '@core/Target';
 import Board from '@core/Board';
 import {EventEmitter} from '@studimax/event';
+import {UnknownCardError} from '@core/error/errors';
 
 type GameEvents = {
   start: () => void;
+  end: () => void;
   turn: (turn: number, player: Player) => void;
   round: (round: number) => void;
   skipTurn: (player: Player) => void;
   cardPlayed: (card: Card, player: Player) => void;
   minionAdded: (minion: Minion) => void;
   minionDied: (minion: Minion) => void;
+  minionHurt: (minion: Minion) => void;
 };
 
 export default class Game extends EventEmitter<GameEvents> {
@@ -26,7 +29,7 @@ export default class Game extends EventEmitter<GameEvents> {
 
   constructor() {
     super();
-    this.players = [new Player(), new Player()];
+    this.players = [new Player(this), new Player(this)];
   }
 
   public get round(): number {
@@ -38,12 +41,17 @@ export default class Game extends EventEmitter<GameEvents> {
   }
 
   public start() {
+    this.emit('start');
     this.#startAt = Date.now();
     this.#onMain();
   }
 
+  public end() {
+    clearTimeout(this.#turnTimer);
+    this.emit('end');
+  }
+
   #onMain() {
-    this.emit('start');
     this.turn = -1;
     this.nextTurn();
   }
@@ -62,9 +70,14 @@ export default class Game extends EventEmitter<GameEvents> {
     this.#onTurn(this.currentPlayer);
   }
 
-  public skipTurn() {
-    this.emit('skipTurn', this.currentPlayer);
-    setImmediate(() => this.nextTurn());
+  public skipTurn(): Promise<void> {
+    return new Promise<void>(resolve => {
+      this.emit('skipTurn', this.currentPlayer);
+      setImmediate(async () => {
+        await this.nextTurn();
+        resolve();
+      });
+    });
   }
 
   public playCard(card: Card, player: Player) {
@@ -77,12 +90,12 @@ export default class Game extends EventEmitter<GameEvents> {
         this.castSpell(card as SpellCard, player);
         break;
       default:
-        throw new Error('Unknown card type');
+        throw new UnknownCardError();
     }
   }
 
   private addMinion(card: MinionCard, player: Player) {
-    const minion = new Minion(card);
+    const minion = new Minion(card, this);
     const index = this.players.findIndex(p => p === player);
     this.boards[index].push(minion);
     this.emit('minionAdded', minion);

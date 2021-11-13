@@ -6,6 +6,7 @@ import NAMED_LOG from './transports/NamedLogTransport';
 import CONSOLE_LOG from './transports/ConsoleLogTransport';
 import SIMULATE_LAG from './transports/SimulateLogTransport';
 import ts from '@studimax/ts';
+import Serializer from './Serializer';
 
 /**
  * @internal
@@ -85,7 +86,7 @@ export default class Logger {
       timestamp: format(date, this.#options.dateFormat),
       level,
       message,
-      metadata: metadata ? JSON.stringify(metadata) : '',
+      metadata: metadata ? JSON.stringify(metadata, Serializer()) : '',
     });
     const data = {
       date,

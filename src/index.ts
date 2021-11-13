@@ -4,7 +4,6 @@ import Server from '@studimax/server';
 import Game from '@core/Game';
 import {Log} from '@studimax/logger';
 import localizeCard from '@core/cards/LocalizedCard';
-import Minion from '@core/Minion';
 import {BodyParser} from '@studimax/server/src/Server';
 
 (async () => {
@@ -20,12 +19,8 @@ import {BodyParser} from '@studimax/server/src/Server';
     .use(BodyParser)
     .get('/routes/:method?', ({params}) => server.getRoutes(params.method).map(({method, path}) => ({method, path})))
     .get('/', () => cardManager.getCards().map(card => localizeCard(card, i18n)))
-    .get('/log', () => Log.logHistory.map((log, i) => `[${i}]\t${log.output}`).join('\n'))
-    .post('/game', request => request.body);
-  const minion = Minion.fromCard(cardManager.getCardById(1));
-  console.log(JSON.stringify(minion));
-  minion.attackTarget(minion);
-  console.log(JSON.stringify(minion));
+    .get('/log', () => Log.logHistory.map((log, i) => `[${i}]\t${log.output}`).join('\n'));
+
   const game = new Game();
   game.on('*', (event, params) => {
     Log.info(event, params);
@@ -33,6 +28,7 @@ import {BodyParser} from '@studimax/server/src/Server';
       client.send(JSON.stringify({event, params}));
     });
   });
+
   game.start();
   await server.listen(8080);
 })();

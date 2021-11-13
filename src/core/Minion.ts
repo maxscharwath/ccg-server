@@ -1,6 +1,7 @@
 import MinionCard from '@core/cards/MinionCard';
 import Card from '@core/cards/Card';
 import Target from '@core/Target';
+import Game from '@core/Game';
 
 type Modifier = {attack: number; health: number};
 type ModifierFunction = (modifier: Modifier) => Partial<Modifier>;
@@ -14,15 +15,15 @@ export default class Minion extends Target {
   public attack: number;
   #modifiers: ModifierFunction[] = [];
 
-  constructor(card: MinionCard) {
-    super();
+  constructor(card: MinionCard, game?: Game) {
+    super(game);
     this.#card = card;
     this.health = card.health;
     this.attack = card.attack;
   }
 
-  public static fromCard(card: Card): Minion {
-    if (card instanceof MinionCard) return new Minion(card);
+  public static fromCard(card: Card, game?: Game): Minion {
+    if (card instanceof MinionCard) return new Minion(card, game);
     throw new SyntaxError(`Cannot create a minion with this card ${card.toString()}`);
   }
 
@@ -46,5 +47,15 @@ export default class Minion extends Target {
       attack: this.attack,
       health: this.health,
     });
+  }
+
+  override hurt(amount: number) {
+    super.hurt(amount);
+    this.game?.emit('minionHurt', this);
+  }
+
+  override die() {
+    super.die();
+    this.game?.emit('minionDied', this);
   }
 }

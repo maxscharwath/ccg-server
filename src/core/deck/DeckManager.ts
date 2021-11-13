@@ -2,6 +2,7 @@ import {CardId} from '@core/cards/Card';
 import {BufferReader, BufferWriter} from '@core/misc/Buffer';
 import Deck from '@core/deck/Deck';
 import CardManager from '@core/cards/CardManager';
+import {InvalidCodeError, UnsupportedVersionError} from '@core/error/errors';
 
 /**
  * CardTuple represent a tuple of card and occurrence
@@ -48,11 +49,11 @@ export default class DeckManager {
   static parse(code: string): CardTuple[] {
     const reader = new BufferReader(code);
     if (reader.nextByte() !== 0) {
-      throw new Error('Invalid code');
+      throw new InvalidCodeError();
     }
     const version = reader.nextVarint();
     if (version !== this.VERSION) {
-      throw new Error(`Unsupported code version ${version}`);
+      throw new UnsupportedVersionError(version);
     }
     const cards: CardTuple[] = [];
     const nbCards = reader.nextVarint();

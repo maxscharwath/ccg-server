@@ -1,7 +1,8 @@
 import * as fg from 'fast-glob';
-import Card from '@core/cards/Card';
+import Card, {CardId} from '@core/cards/Card';
 import {cardsDataFolder} from '@data/cards';
 import {Log} from '@studimax/logger';
+import {CardIdAlreadyExistsError, NotACardError} from '@core/error/errors';
 
 export type ReadonlyCard<T extends Card> = Readonly<T> & T;
 /**
@@ -9,8 +10,8 @@ export type ReadonlyCard<T extends Card> = Readonly<T> & T;
  * @remarks Cards are loaded from the cardsDataFolder. More than one card can be stored in the same file.
  */
 export default class CardManager {
-  private readonly cards = new Map<number, ReadonlyCard<Card>>();
-  private loaded = false;
+  readonly #cards = new Map<CardId, ReadonlyCard<Card>>();
+  #loaded = false;
 
   async #loadFromFile(file: string): Promise<void> {
     const contents = await import(file);
@@ -46,7 +47,7 @@ export default class CardManager {
         })
       )
     );
-    this.loaded = true;
+    this.#loaded = true;
   }
 
   /**
@@ -55,13 +56,13 @@ export default class CardManager {
    */
   public addCard<T extends typeof Card>(CardClass: T): ReadonlyCard<InstanceType<T>> {
     if (!((CardClass as unknown as ObjectConstructor).prototype instanceof Card)) {
-      throw new Error(`${CardClass.name} is not a ${Card.name}`);
+      throw new NotACardError(CardClass.name);
     }
     const card = Object.freeze(new (CardClass as unknown as ObjectConstructor)()) as ReadonlyCard<InstanceType<T>>;
-    if (this.cards.has(card.id)) {
-      throw new Error(`There are already a card with this id (${card.id})`);
+    if (this.#cards.has(card.id)) {
+      throw new CardIdAlreadyExistsError(card.id);
     }
-    this.cards.set(card.id, card);
+    this.#cards.set(card.id, card);
     return card as ReadonlyCard<InstanceType<T>>;
   }
 
@@ -69,21 +70,21 @@ export default class CardManager {
    * Verify if the card manager is loaded.
    */
   public isLoaded(): boolean {
-    return this.loaded;
+    return this.#loaded;
   }
 
   /**
    * Get the number of cards loaded.
    */
   public countCards(): number {
-    return this.cards.size;
+    return this.#cards.size;
   }
 
   /**
    * Get list of all the cards sorted by id.
    */
   public getCards(): ReadonlyCard<Card>[] {
-    return [...this.cards.values()].sort((a, b) => a.id - b.id);
+    return [...this.#cards.values()].sort((a, b) => a.id - b.id);
   }
 
   /**
@@ -101,11 +102,11 @@ export default class CardManager {
    * @throws RangeError if the card is not found.
    * @returns The card
    */
-  public getCardById<T extends Card>(id: number): ReadonlyCard<T> {
-    if (!this.cards.has(id)) {
+  public getCardById<T extends Card>(id: CardId): ReadonlyCard<T> {
+    if (!this.#cards.has(id)) {
       throw new RangeError(`Card with id ${id} not found`);
     }
-    return this.cards.get(id) as T;
+    return this.#cards.get(id) as T;
   }
 
   /**
@@ -115,7 +116,7 @@ export default class CardManager {
    * @throws RangeError if the card is not found.
    * @returns The card
    */
-  public getMutableCardById<T extends Card>(id: number): T {
+  public getMutableCardById<T extends Card>(id: CardId): T {
     return this.getCardById(id).clone(false) as T;
   }
 
@@ -132,7 +133,7 @@ export default class CardManager {
    * Verify if a card exists.
    * @param id The id of the card.
    */
-  public hasCardId(id: number): boolean {
-    return this.cards.has(id);
+  public hasCardId(id: CardId): boolean {
+    return this.#cards.has(id);
   }
 }

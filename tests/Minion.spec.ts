@@ -34,4 +34,12 @@ describe('Minion', () => {
       health: card.health + 2 - 5,
     });
   });
+  test('Minion should attack and get damage', () => {
+    const minionCard = cardManager.getCardById<MinionCard>(0x0001);
+    const minionA = Minion.fromCard(minionCard);
+    const minionB = Minion.fromCard(minionCard);
+    minionA.attackTarget(minionB);
+    expect(minionA.health).toBe(minionCard.health - minionCard.attack);
+    expect(minionB.health).toBe(minionCard.health - minionCard.attack);
+  });
 });

@@ -19,6 +19,10 @@ export default class Hand extends ArrayCapacity<Card> {
     this.push(card);
   }
 
+  public hasCard(card: Card): boolean {
+    return this.some(card.equals);
+  }
+
   public getCards(): Card[] {
     return [...this];
   }

@@ -17,6 +17,9 @@
     "path-to-regexp": "^6.2.0",
     "ws": "^8.2.3"
   },
+  "devDependencies": {
+    "@types/ws": "^8.2.0"
+  },
   "engines": {
     "node": ">=12.9.0"
   }

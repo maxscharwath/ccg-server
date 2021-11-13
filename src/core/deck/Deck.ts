@@ -1,5 +1,6 @@
 import Card, {CardRarity} from '@core/cards/Card';
 import ArrayCapacity from '@studimax/array-capacity';
+import {InvalidDeckError} from '@core/error/errors';
 
 /**
  * Class Deck represent a Stack of Cards
@@ -14,13 +15,13 @@ export default class Deck extends ArrayCapacity<Card> {
 
   public addCard(card: Card): void {
     if (this.length >= Deck.#MAX_CARDS) {
-      throw new RangeError(`Deck must have ${Deck.#MAX_CARDS} cards`);
+      throw new InvalidDeckError(`Must have ${Deck.#MAX_CARDS} cards`);
     }
     if (this.filter(c => c.equals(card)).length >= 2) {
-      throw new Error('Deck can only include 2 of each card');
+      throw new InvalidDeckError('Must only include 2 of each card');
     }
     if (card.rarity === CardRarity.LEGENDARY && this.filter(c => c.equals(card)).length >= 1) {
-      throw new Error('Deck can only include 1 of each card of type Legendary');
+      throw new InvalidDeckError('Must only include 1 of each card of type Legendary');
     }
 
     this.push(card);
