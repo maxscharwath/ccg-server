@@ -3,30 +3,32 @@ import {EmptyDeckError} from '../src/core/error/errors';
 import {ok} from 'assert';
 
 describe('Test Game', () => {
+  let game: Game;
+  beforeEach(() => {
+    game = new Game();
+  });
+  afterEach(() => {
+    game.end();
+  });
   it('should create an instance', () => {
-    const game = new Game();
     expect(game).toBeInstanceOf(Game);
+    game.end();
   });
   it('should game emit start on start', done => {
-    const game = new Game();
     game.on('start', () => done());
     game.start();
   });
   it('should game emit end on end', done => {
-    const game = new Game();
     game.on('end', () => done());
     game.end();
   });
   it('should throw an error', () => {
-    const game = new Game();
-    expect(() => game.currentPlayer.drawCard()).toThrow(EmptyDeckError);
+    expect(() => game.currentHero.drawCard()).toThrow(EmptyDeckError);
   });
-  it('Next turn should switch current player', async () => {
-    const game = new Game();
-    const player1 = game.currentPlayer;
+  it('Next turn should switch current hero', async () => {
+    const hero1 = game.currentHero;
     await game.skipTurn();
-    const player2 = game.currentPlayer;
-    game.end();
-    ok(player1 !== player2);
+    const hero2 = game.currentHero;
+    ok(hero1 !== hero2);
   });
 });

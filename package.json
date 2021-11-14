@@ -25,7 +25,7 @@
     "prepare": "husky install",
     "start": "ts-node -r tsconfig-paths/register ./src/index.ts",
     "start:prod": "node build/index.js",
-    "test": "jest"
+    "test": "jest --detectOpenHandles"
   },
   "dependencies": {
     "@studimax/array-capacity": "1.0.0",

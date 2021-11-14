@@ -1,20 +1,18 @@
 import Card from '@core/cards/Card';
 import Minion from '@core/Minion';
-import MinionCard from '@core/cards/MinionCard';
 import SpellCard from '@core/cards/SpellCard';
-import Player from '@core/Player';
+import Hero from '@core/Hero';
 import Target from '@core/Target';
 import Board from '@core/Board';
 import {EventEmitter} from '@studimax/event';
-import {UnknownCardError} from '@core/error/errors';
 
 type GameEvents = {
   start: () => void;
   end: () => void;
-  turn: (turn: number, player: Player) => void;
+  turn: (turn: number, hero: Hero) => void;
   round: (round: number) => void;
-  skipTurn: (player: Player) => void;
-  cardPlayed: (card: Card, player: Player) => void;
+  skipTurn: (hero: Hero) => void;
+  cardPlayed: (card: Card, hero: Hero) => void;
   minionAdded: (minion: Minion) => void;
   minionDied: (minion: Minion) => void;
   minionHurt: (minion: Minion) => void;
@@ -22,22 +20,23 @@ type GameEvents = {
 
 export default class Game extends EventEmitter<GameEvents> {
   public turn = 0;
-  public readonly players: [Player, Player];
-  public readonly boards: [Board, Board] = [new Board(), new Board()];
+  public readonly heros: [Hero, Hero];
+  public readonly boards = new WeakMap<Hero, Board>();
   #turnTimer!: NodeJS.Timeout;
   #startAt = 0;
 
   constructor() {
     super();
-    this.players = [new Player(this), new Player(this)];
+    this.heros = [new Hero(this), new Hero(this)];
+    this.heros.forEach(hero => this.boards.set(hero, new Board()));
   }
 
   public get round(): number {
     return this.turn >> 1;
   }
 
-  public get currentPlayer(): Player {
-    return this.players[this.turn % 2];
+  public get currentHero(): Hero {
+    return this.heros[this.turn % 2];
   }
 
   public start() {
@@ -47,61 +46,44 @@ export default class Game extends EventEmitter<GameEvents> {
   }
 
   public end() {
-    clearTimeout(this.#turnTimer);
     this.emit('end');
+    clearTimeout(this.#turnTimer);
+    this.removeAllListeners();
   }
 
   #onMain() {
     this.turn = -1;
-    this.nextTurn();
+    this.#nextTurn();
   }
 
-  #onTurn(player: Player) {
+  #onTurn(hero: Hero) {
     clearTimeout(this.#turnTimer);
-    this.#turnTimer = setTimeout(() => this.nextTurn(), 75_000);
-    this.emit('turn', this.turn, player);
+    this.#turnTimer = setTimeout(() => this.#nextTurn(), 75_000);
+    this.emit('turn', this.turn, hero);
   }
 
-  private nextTurn() {
+  #nextTurn() {
     this.turn++;
     if (this.turn % 2 === 0) {
       this.emit('round', this.round);
     }
-    this.#onTurn(this.currentPlayer);
+    this.#onTurn(this.currentHero);
   }
 
+  /**
+   * Skip the current turn.
+   */
   public skipTurn(): Promise<void> {
     return new Promise<void>(resolve => {
-      this.emit('skipTurn', this.currentPlayer);
       setImmediate(async () => {
-        await this.nextTurn();
+        this.emit('skipTurn', this.currentHero);
+        await this.#nextTurn();
         resolve();
       });
     });
   }
 
-  public playCard(card: Card, player: Player) {
-    this.emit('cardPlayed', card, player);
-    switch (card.type) {
-      case 'minion':
-        this.addMinion(card as MinionCard, player);
-        break;
-      case 'spell':
-        this.castSpell(card as SpellCard, player);
-        break;
-      default:
-        throw new UnknownCardError();
-    }
-  }
-
-  private addMinion(card: MinionCard, player: Player) {
-    const minion = new Minion(card, this);
-    const index = this.players.findIndex(p => p === player);
-    this.boards[index].push(minion);
-    this.emit('minionAdded', minion);
-  }
-
-  private castSpell(card: SpellCard, target: Target): boolean {
+  public castSpell(card: SpellCard, target?: Target): boolean {
     return card.onCast({
       target,
     });

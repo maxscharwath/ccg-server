@@ -23,8 +23,8 @@ export default class Elo {
 
   /**
    * Calculates the probability to win based on the rating of the opponent.
-   * @param Ra Elo rating of the player A.
-   * @param Rb Elo rating of the player B.
+   * @param Ra Elo rating of the hero A.
+   * @param Rb Elo rating of the hero B.
    */
   public calculatePerformance(Ra: number, Rb: number): {Ea: number; Eb: number} {
     return {
@@ -33,10 +33,10 @@ export default class Elo {
     };
   }
   /**
-   * Calculates the expected score of a player based on the rating of the other player.
-   * @param Ra Elo rating of the player A.
-   * @param Rb Elo rating of the player B.
-   * @param S Expected score of player A. (0 <= S <= 1)
+   * Calculates the expected score of a hero based on the rating of the other hero.
+   * @param Ra Elo rating of the hero A.
+   * @param Rb Elo rating of the hero B.
+   * @param S Expected score of hero A. (0 <= S <= 1)
    */
   public calculateRating(Ra: number, Rb: number, S = 1): {Rb: number; Ra: number} {
     const {Ea, Eb} = this.calculatePerformance(Ra, Rb);
