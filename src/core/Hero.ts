@@ -65,4 +65,14 @@ export default class Hero extends Target {
     this.board?.pushAt(position, minion);
     this.game.emit('minionAdded', minion);
   }
+
+  override hurt(amount: number) {
+    super.hurt(amount);
+    this.game?.emit('heroHurt', this);
+  }
+
+  override die() {
+    super.die();
+    this.game?.emit('heroDied', this);
+  }
 }

@@ -10,7 +10,9 @@ export default class Deck extends ArrayCapacity<Card> {
   static #MAX_CARDS = 30;
 
   constructor() {
-    super(Deck.#MAX_CARDS);
+    super({
+      capacity: Deck.#MAX_CARDS,
+    });
   }
 
   public addCard(card: Card): void {

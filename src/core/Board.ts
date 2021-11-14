@@ -4,7 +4,13 @@ import ArrayCapacity from '@studimax/array-capacity';
 export default class Board extends ArrayCapacity<Minion> {
   static readonly #MAX_MINIONS = 7;
   constructor() {
-    super(Board.#MAX_MINIONS);
+    super({
+      capacity: Board.#MAX_MINIONS,
+      transformer(minion) {
+        console.log(minion);
+        return minion;
+      },
+    });
   }
 
   public getAdjacent(index: number): Minion[] {

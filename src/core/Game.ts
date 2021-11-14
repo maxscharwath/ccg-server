@@ -16,6 +16,8 @@ type GameEvents = {
   minionAdded: (minion: Minion) => void;
   minionDied: (minion: Minion) => void;
   minionHurt: (minion: Minion) => void;
+  heroDied: (hero: Hero) => void;
+  heroHurt: (hero: Hero) => void;
 };
 
 export default class Game extends EventEmitter<GameEvents> {

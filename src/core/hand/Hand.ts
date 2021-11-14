@@ -5,7 +5,9 @@ export default class Hand extends ArrayCapacity<Card> {
   static #MAX_CARDS = 10;
 
   constructor() {
-    super(Hand.#MAX_CARDS);
+    super({
+      capacity: Hand.#MAX_CARDS,
+    });
   }
 
   /**
