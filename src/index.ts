@@ -5,7 +5,6 @@ import Game from '@core/Game';
 import {Log} from '@studimax/logger';
 import localizeCard from '@core/cards/LocalizedCard';
 import {BodyParser} from '@studimax/server/src/Server';
-
 (async () => {
   const i18n = new I18N('./locales/', 'fr-fr');
   await i18n.load();

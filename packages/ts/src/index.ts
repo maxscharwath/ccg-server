@@ -22,9 +22,9 @@ export default function ts(
   };
   const braceRegex = /{(\d+|[a-z$_][\w\-$]*?(?:\.[\w\-$]*?)*?)}/gi;
   return template.replace(braceRegex, (placeholder: string, key: string) => {
-    let value = data;
+    let value: unknown[] | Record<string, unknown> | undefined = data;
     for (const property of key.split('.')) {
-      value = value ? value[property] : undefined;
+      value = value ? value[property as never] : undefined;
     }
     const transformedValue = opts.transform({value, key});
     return transformedValue === undefined ? opts.placeholder ?? placeholder : String(transformedValue);
