@@ -49,6 +49,11 @@ export default class Minion extends Target {
     });
   }
 
+  override attackTarget(target: Target) {
+    super.attackTarget(target);
+    this.game?.emit('minionAttack', this, target);
+  }
+
   override hurt(amount: number) {
     super.hurt(amount);
     this.game?.emit('minionHurt', this);

@@ -16,6 +16,7 @@ type EventKey<T extends EventMap> = string & keyof EventMapImproved<T>;
  * @author Maxime Scharwath
  */
 export class EventEmitter<T extends EventMap> extends event.EventEmitter {
+  #children = new Set<SubEventEmitter<T>>();
   /**
    * Emit an event.
    * @param event The name of the event.
@@ -26,6 +27,7 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
       throw new Error("Event '*' can be emitted");
     }
     super.emit('*', event, params);
+    this.#children.forEach(child => child.emit(event, ...params));
     return super.emit(event, ...params);
   }
 
@@ -123,5 +125,31 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    */
   public override off<K extends EventKey<T>>(event: K, listener: EventMapImproved<T>[K]): this {
     return super.off(event, listener);
+  }
+
+  public subEmitter(): SubEventEmitter<T> {
+    return new SubEventEmitter<T>(this);
+  }
+
+  public link(child: SubEventEmitter<T>): this {
+    this.#children.add(child);
+    return this;
+  }
+  public unlink(child?: SubEventEmitter<T>): this {
+    if (child) {
+      this.#children.delete(child);
+    } else {
+      this.#children.clear();
+    }
+    return this;
+  }
+}
+
+export class SubEventEmitter<T extends EventMap> extends EventEmitter<T> {
+  #parent: EventEmitter<T>;
+
+  constructor(parent: EventEmitter<T>) {
+    super();
+    this.#parent = parent.link(this);
   }
 }

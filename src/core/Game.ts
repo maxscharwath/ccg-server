@@ -5,6 +5,7 @@ import Hero from '@core/Hero';
 import Target from '@core/Target';
 import Board from '@core/Board';
 import {EventEmitter} from '@studimax/event';
+import {SubEventEmitter} from '@studimax/event/src';
 
 type GameEvents = {
   start: () => void;
@@ -16,9 +17,27 @@ type GameEvents = {
   minionAdded: (minion: Minion) => void;
   minionDied: (minion: Minion) => void;
   minionHurt: (minion: Minion) => void;
+  minionAttack: (minion: Minion, target: Target) => void;
   heroDied: (hero: Hero) => void;
   heroHurt: (hero: Hero) => void;
 };
+
+export class GameContext extends SubEventEmitter<GameEvents> {
+  public readonly hero: Hero;
+
+  get board(): Board {
+    return <Board>this.hero.board;
+  }
+
+  protected constructor(game: Game, hero: Hero) {
+    super(game);
+    this.hero = hero;
+  }
+
+  static create<O extends Object>(game: Game, hero: Hero, options?: O): GameContext & O {
+    return Object.assign(new GameContext(game, hero), options);
+  }
+}
 
 export default class Game extends EventEmitter<GameEvents> {
   public turn = 0;
@@ -86,8 +105,7 @@ export default class Game extends EventEmitter<GameEvents> {
   }
 
   public castSpell(card: SpellCard, target?: Target): boolean {
-    return card.onCast({
-      target,
-    });
+    //todo : Probably not the best way to do this.
+    return card.onCast(GameContext.create(this, this.currentHero, {target}));
   }
 }

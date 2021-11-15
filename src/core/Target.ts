@@ -15,6 +15,10 @@ export default abstract class Target {
     return this.#uuid;
   }
 
+  public isDead(): boolean {
+    return this.health <= 0;
+  }
+
   public attackTarget(target: Target) {
     target.hurt(this.attack);
     this.hurt(target.attack);

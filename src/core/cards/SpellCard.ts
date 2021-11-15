@@ -1,7 +1,8 @@
 import Card from '@core/cards/Card';
 import Target from '@core/Target';
+import {GameContext} from '@core/Game';
 
-export type CastOptions = {
+export type SpellGameContext = GameContext & {
   target?: Target;
 };
 /**
@@ -14,7 +15,7 @@ export default abstract class SpellCard extends Card {
     return true;
   }
 
-  public onCast(options: CastOptions): boolean {
-    return this.canCast(options.target);
+  public onCast(context: SpellGameContext): boolean {
+    return this.canCast(context.target);
   }
 }

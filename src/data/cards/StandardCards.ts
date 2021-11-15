@@ -1,4 +1,4 @@
-import MinionCard from '@core/cards/MinionCard';
+import MinionCard, {MinionGameContext} from '@core/cards/MinionCard';
 import SpellCard from '@core/cards/SpellCard';
 import {CardRarity} from '@core/cards/Card';
 
@@ -9,6 +9,14 @@ export class KingKrushCard extends MinionCard {
   public health = 8;
   public tag = 'king_krush';
   public rarity = CardRarity.LEGENDARY;
+
+  override onUse(context: MinionGameContext) {
+    super.onUse(context);
+    context.on('round', () => {
+      context.minion.attack += 2;
+      context.minion.health += 2;
+    });
+  }
 }
 
 export class TheCoinCard extends SpellCard {
