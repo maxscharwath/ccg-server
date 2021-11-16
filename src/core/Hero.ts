@@ -1,7 +1,7 @@
 import Deck from '@core/deck/Deck';
 import Hand from '@core/hand/Hand';
 import Target from '@core/Target';
-import Game from '@core/Game';
+import Game, {GameContext} from '@core/Game';
 import Card from '@core/cards/Card';
 import {EmptyDeckError, HandFullError, UnknownCardError} from '@core/error/errors';
 import MinionCard from '@core/cards/MinionCard';
@@ -42,28 +42,28 @@ export default class Hero extends Target {
     return card;
   }
 
-  public playCard(card: MinionCard, options: {position: number}): void;
-  public playCard(card: SpellCard, options: {target: Target}): void;
-  public playCard(card: Card, options: Partial<{position: number; target: Target}>): void {
-    if (!this.hand.hasCard(card) || !this.game) return;
+  public playCard(card: MinionCard, options: {position: number}): boolean;
+  public playCard(card: SpellCard, options: {target: Target}): boolean;
+  public playCard(card: Card, options: Partial<{position: number; target: Target}>): boolean {
+    if (!this.hand.hasCard(card) || !this.game) return false;
     this.game.emit('cardPlayed', card, this);
     switch (card.type) {
       case 'minion':
-        this.#addMinion(card as MinionCard, options?.position);
-        break;
+        return this.#addMinion(card as MinionCard, options?.position);
       case 'spell':
-        this.game.castSpell(card as SpellCard, options?.target);
-        break;
+        return this.game.castSpell(card as SpellCard, options?.target);
       default:
         throw new UnknownCardError();
     }
   }
 
-  #addMinion(card: MinionCard, position = 0) {
-    if (!this.game) return;
-    const minion = new Minion(card, this.game);
+  #addMinion(card: MinionCard, position = 0): boolean {
+    if (!this.game) return false;
+    const minion = new Minion(card, this);
+    minion.getCard().onUse(minion.context);
     this.board?.pushAt(position, minion);
     this.game.emit('minionAdded', minion);
+    return true;
   }
 
   override hurt(amount: number) {

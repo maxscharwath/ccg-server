@@ -22,10 +22,14 @@ export default class Hand extends ArrayCapacity<Card> {
   }
 
   public hasCard(card: Card): boolean {
-    return this.some(card.equals);
+    return this.some(c => card.equals(c));
   }
 
   public getCards(): Card[] {
     return [...this];
+  }
+
+  public override at<T extends Card = Card>(index: number): T {
+    return super.at(index) as T;
   }
 }

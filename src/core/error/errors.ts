@@ -47,3 +47,9 @@ export class UnknownCardError extends Error {
     super('Unknown card');
   }
 }
+
+export class MinionNotAttachedToGameError extends Error {
+  constructor() {
+    super('Minion is not attached to a game');
+  }
+}

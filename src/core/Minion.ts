@@ -1,7 +1,9 @@
-import MinionCard from '@core/cards/MinionCard';
+import MinionCard, {MinionGameContext} from '@core/cards/MinionCard';
 import Card from '@core/cards/Card';
 import Target from '@core/Target';
-import Game from '@core/Game';
+import Game, {GameContext} from '@core/Game';
+import Hero from '@core/Hero';
+import {MinionNotAttachedToGameError} from '@core/error/errors';
 
 type Modifier = {attack: number; health: number};
 type ModifierFunction = (modifier: Modifier) => Partial<Modifier>;
@@ -14,16 +16,24 @@ export default class Minion extends Target {
   public health: number;
   public attack: number;
   #modifiers: ModifierFunction[] = [];
+  readonly #hero?: Hero;
 
-  constructor(card: MinionCard, game?: Game) {
-    super(game);
+  constructor(card: MinionCard, hero?: Hero) {
+    super(hero?.game);
     this.#card = card;
+    this.#hero = hero;
     this.health = card.health;
     this.attack = card.attack;
   }
 
-  public static fromCard(card: Card, game?: Game): Minion {
-    if (card instanceof MinionCard) return new Minion(card, game);
+  //todo: possibly duplicate the context but it's possible that the hero changes
+  get context(): MinionGameContext {
+    if (!this.#hero || !this.game) throw new MinionNotAttachedToGameError();
+    return GameContext.create(this.game, this.#hero, {minion: this});
+  }
+
+  public static fromCard(card: Card, hero?: Hero): Minion {
+    if (card instanceof MinionCard) return new Minion(card, hero);
     throw new SyntaxError(`Cannot create a minion with this card ${card.toString()}`);
   }
 

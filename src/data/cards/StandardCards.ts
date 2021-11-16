@@ -11,7 +11,6 @@ export class KingKrushCard extends MinionCard {
   public rarity = CardRarity.LEGENDARY;
 
   override onUse(context: MinionGameContext) {
-    super.onUse(context);
     context.on('round', () => {
       context.minion.attack += 2;
       context.minion.health += 2;

@@ -26,7 +26,7 @@ export default abstract class Card {
   }
 
   public equals(card: Card): boolean {
-    return card.id === this.id;
+    return !card ? false : card.id === this.id;
   }
 
   public getClass<T extends Card>(this: T): new (...args: any[]) => T {
