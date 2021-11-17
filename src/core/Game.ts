@@ -104,6 +104,8 @@ export default class Game extends EventEmitter<GameEvents> {
   #onTurn(hero: Hero) {
     clearTimeout(this.#turnTimer);
     this.#turnTimer = setTimeout(() => this.#nextTurn(), 75_000);
+    hero.mana = ++hero.availableMana;
+    console.log(`hero ${hero.mana}`);
     this.emit('turn', this.turn, hero);
   }
 

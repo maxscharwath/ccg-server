@@ -14,7 +14,29 @@ export default class Hero extends Target {
   public readonly hand: Hand = new Hand();
   public health = 30;
   public attack = 0;
-  public mana = 0;
+  #maxMana = 10;
+  #mana = 0;
+  #availableMana = 0;
+
+  public get mana(): number {
+    return this.#mana;
+  }
+
+  public set mana(value: number) {
+    this.#mana = Math.min(Math.max(value, 0), this.#availableMana);
+  }
+
+  public get maxMana(): number {
+    return this.#maxMana;
+  }
+
+  public get availableMana(): number {
+    return this.#availableMana;
+  }
+
+  public set availableMana(value: number) {
+    this.#availableMana = Math.min(Math.max(value, 0), this.#maxMana);
+  }
 
   constructor(game?: Game) {
     super(game);
@@ -42,10 +64,16 @@ export default class Hero extends Target {
     return card;
   }
 
+  public canPlayCard(card: Card): boolean {
+    return this.mana >= card.cost;
+  }
+
   public playCard(card: MinionCard, options: {position: number}): boolean;
   public playCard(card: SpellCard, options: {target: Target}): boolean;
   public playCard(card: Card, options: Partial<{position: number; target: Target}>): boolean {
     if (!this.hand.hasCard(card) || !this.game) return false;
+    if (!this.canPlayCard(card)) return false;
+    this.mana -= card.cost;
     this.game.emit('cardPlayed', card, this);
     switch (card.type) {
       case 'minion':

@@ -47,7 +47,7 @@ describe('Test Game', () => {
         class TestCard extends MinionCard {
           public id = 1;
           public attack = 8;
-          public cost = 9;
+          public cost = 1;
           public health = 8;
           public tag = 'test-card';
           public rarity = CardRarity.LEGENDARY;
@@ -60,6 +60,7 @@ describe('Test Game', () => {
         }
       );
       const hero = game.currentHero;
+      game.start();
       hero.hand.pushAt(0, cardManager.getMutableCardById(1));
       const card = hero.hand.at<MinionCard>(0);
       expect(hero.playCard(card, {position: 0})).toBe(true);
@@ -79,7 +80,7 @@ describe('Test Game', () => {
         class TestCard extends MinionCard {
           public id = 1;
           public attack = 8;
-          public cost = 9;
+          public cost = 1;
           public health = 8;
           public tag = 'test-card';
           public rarity = CardRarity.LEGENDARY;
@@ -95,6 +96,7 @@ describe('Test Game', () => {
         expect(minion).toBe(game?.currentHero.board?.at(0));
         spy();
       });
+      game.start();
       game.currentHero.hand.pushAt(0, cardManager.getMutableCardById(1));
       game.currentHero.playCard(game.currentHero.hand.at<MinionCard>(0), {
         position: 0,

@@ -27,7 +27,7 @@ export default class Minion extends Target {
     this.attack = card.attack;
   }
 
-  get context(): MinionGameContext {
+  public get context(): MinionGameContext {
     if (!this.#hero || !this.game) throw new MinionNotAttachedToGameError();
     if (!this.#context || (this.#context && this.#context.hero !== this.#hero && !this.context.isGame(this.game))) {
       this.#context = GameContext.create(this.game, this.#hero, {minion: this});
@@ -62,18 +62,25 @@ export default class Minion extends Target {
     });
   }
 
-  override attackTarget(target: Target) {
+  public override attackTarget(target: Target) {
     super.attackTarget(target);
     this.game?.emit('minionAttack', this, target);
   }
 
-  override hurt(amount: number) {
+  public override hurt(amount: number) {
     super.hurt(amount);
     this.game?.emit('minionHurt', this);
   }
 
-  override die() {
+  public override die() {
     super.die();
     this.game?.emit('minionDied', this);
+  }
+
+  /**
+   * Call remove when minion is removed from the board
+   */
+  public remove() {
+    this.#context?.unlink();
   }
 }

@@ -1,5 +1,5 @@
 import MinionCard, {MinionGameContext} from '@core/cards/MinionCard';
-import SpellCard from '@core/cards/SpellCard';
+import SpellCard, {SpellGameContext} from '@core/cards/SpellCard';
 import {CardRarity} from '@core/cards/Card';
 
 export class KingKrushCard extends MinionCard {
@@ -23,6 +23,14 @@ export class TheCoinCard extends SpellCard {
   public cost = 9;
   public tag = 'the_coin';
   public rarity = CardRarity.COMMON;
+
+  override onCast(context: SpellGameContext): boolean {
+    if (super.onCast(context)) {
+      context.hero.mana += 1;
+      return true;
+    }
+    return false;
+  }
 }
 
 export class PoisonCard extends SpellCard {
