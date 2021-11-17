@@ -1,7 +1,7 @@
 import MinionCard, {MinionGameContext} from '@core/cards/MinionCard';
 import Card from '@core/cards/Card';
 import Target from '@core/Target';
-import Game, {GameContext} from '@core/Game';
+import {GameContext} from '@core/Game';
 import Hero from '@core/Hero';
 import {MinionNotAttachedToGameError} from '@core/error/errors';
 
@@ -12,11 +12,12 @@ type ModifierFunction = (modifier: Modifier) => Partial<Modifier>;
  * Class Minion represent a Minion in the board
  */
 export default class Minion extends Target {
-  readonly #card: MinionCard;
   public health: number;
   public attack: number;
+  readonly #card: MinionCard;
   #modifiers: ModifierFunction[] = [];
   readonly #hero?: Hero;
+  #context?: MinionGameContext;
 
   constructor(card: MinionCard, hero?: Hero) {
     super(hero?.game);
@@ -26,10 +27,12 @@ export default class Minion extends Target {
     this.attack = card.attack;
   }
 
-  //todo: possibly duplicate the context but it's possible that the hero changes
   get context(): MinionGameContext {
     if (!this.#hero || !this.game) throw new MinionNotAttachedToGameError();
-    return GameContext.create(this.game, this.#hero, {minion: this});
+    if (!this.#context || (this.#context && this.#context.hero !== this.#hero && !this.context.isGame(this.game))) {
+      this.#context = GameContext.create(this.game, this.#hero, {minion: this});
+    }
+    return this.#context as MinionGameContext;
   }
 
   public static fromCard(card: Card, hero?: Hero): Minion {

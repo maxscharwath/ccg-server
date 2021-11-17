@@ -32,6 +32,7 @@ export default class Elo {
       Eb: 1 / (1 + 10 ** ((Ra - Rb) / Elo.#PERF)),
     };
   }
+
   /**
    * Calculates the expected score of a hero based on the rating of the other hero.
    * @param Ra Elo rating of the hero A.

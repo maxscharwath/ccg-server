@@ -3,13 +3,10 @@ import ArrayCapacity from '@studimax/array-capacity';
 
 export default class Board extends ArrayCapacity<Minion> {
   static readonly #MAX_MINIONS = 7;
+
   constructor() {
     super({
       capacity: Board.#MAX_MINIONS,
-      transformer(minion) {
-        console.log(minion);
-        return minion;
-      },
     });
   }
 

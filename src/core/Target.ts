@@ -4,8 +4,8 @@ import Game from '@core/Game';
 export default abstract class Target {
   public abstract health: number;
   public abstract attack: number;
-  readonly #uuid = crypto.randomUUID();
   public game?: Game;
+  readonly #uuid = crypto.randomUUID();
 
   protected constructor(game?: Game) {
     this.game = game;

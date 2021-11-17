@@ -13,23 +13,6 @@ export default class CardManager {
   readonly #cards = new Map<CardId, ReadonlyCard<Card>>();
   #loaded = false;
 
-  async #loadFromFile(file: string): Promise<void> {
-    const contents = await import(file);
-    await Promise.allSettled(
-      Object.entries<typeof Card>(contents).map(([key, CardClass]) =>
-        (async () => this.addCard(CardClass))()
-          .then(c => {
-            Log.info(`Card ${c.getIdStr()} loaded from ${file}`);
-            return c;
-          })
-          .catch((e: Error) => {
-            Log.error(`Error while loading card ${key} from ${file}`, e.toString());
-            throw e;
-          })
-      )
-    );
-  }
-
   /**
    * Load all the cards from the cardsDataFolder.
    */
@@ -135,5 +118,22 @@ export default class CardManager {
    */
   public hasCardId(id: CardId): boolean {
     return this.#cards.has(id);
+  }
+
+  async #loadFromFile(file: string): Promise<void> {
+    const contents = await import(file);
+    await Promise.allSettled(
+      Object.entries<typeof Card>(contents).map(([key, CardClass]) =>
+        (async () => this.addCard(CardClass))()
+          .then(c => {
+            Log.info(`Card ${c.getIdStr()} loaded from ${file}`);
+            return c;
+          })
+          .catch((e: Error) => {
+            Log.error(`Error while loading card ${key} from ${file}`, e.toString());
+            throw e;
+          })
+      )
+    );
   }
 }

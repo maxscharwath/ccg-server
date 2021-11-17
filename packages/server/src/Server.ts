@@ -13,33 +13,6 @@ export default class Server extends http.Server {
   #middlewares: Middleware[] = [];
   #routes: Route[] = [];
 
-  async #requestListener(req: Request, res: Response) {
-    for (const middleware of this.#middlewares) {
-      const error = await new Promise(next => middleware(req, res, next)?.then(next).catch(next));
-      if (res.writableFinished) return;
-      if (error) return res.send(error);
-    }
-    res.status(404).send(new Error('Not Found'));
-  }
-  #addRoute(method: string, path: string, handler: Handler): this {
-    method = method.toUpperCase();
-    const middleware: Middleware = async (req, res) => {
-      if (req.method !== method) return;
-      const url = req.url as string;
-      const regexp = pathToRegexp(path);
-      if (!regexp.test(url)) return;
-      const result = match<{[key: string]: string}>(path)(url);
-      if (result) req.params = result.params;
-      res.send(await handler(req, res));
-    };
-    this.#routes.push({
-      method,
-      path,
-      middleware,
-    });
-    this.#middlewares.push(middleware);
-    return this;
-  }
   constructor() {
     super(
       {
@@ -66,11 +39,17 @@ export default class Server extends http.Server {
   }
 
   public get = (path: string, handler: Handler): this => this.#addRoute('GET', path, handler);
+
   public post = (path: string, handler: Handler): this => this.#addRoute('POST', path, handler);
+
   public put = (path: string, handler: Handler): this => this.#addRoute('PUT', path, handler);
+
   public delete = (path: string, handler: Handler): this => this.#addRoute('DELETE', path, handler);
+
   public patch = (path: string, handler: Handler): this => this.#addRoute('PATCH', path, handler);
+
   public options = (path: string, handler: Handler): this => this.#addRoute('OPTIONS', path, handler);
+
   public head = (path: string, handler: Handler): this => this.#addRoute('HEAD', path, handler);
 
   public unUse(middleware: Middleware) {
@@ -85,6 +64,35 @@ export default class Server extends http.Server {
         this.#routes.splice(this.#routes.indexOf(route), 1);
         this.unUse(route.middleware);
       });
+    return this;
+  }
+
+  async #requestListener(req: Request, res: Response) {
+    for (const middleware of this.#middlewares) {
+      const error = await new Promise(next => middleware(req, res, next)?.then(next).catch(next));
+      if (res.writableFinished) return;
+      if (error) return res.send(error);
+    }
+    res.status(404).send(new Error('Not Found'));
+  }
+
+  #addRoute(method: string, path: string, handler: Handler): this {
+    method = method.toUpperCase();
+    const middleware: Middleware = async (req, res) => {
+      if (req.method !== method) return;
+      const url = req.url as string;
+      const regexp = pathToRegexp(path);
+      if (!regexp.test(url)) return;
+      const result = match<{[key: string]: string}>(path)(url);
+      if (result) req.params = result.params;
+      res.send(await handler(req, res));
+    };
+    this.#routes.push({
+      method,
+      path,
+      middleware,
+    });
+    this.#middlewares.push(middleware);
     return this;
   }
 }

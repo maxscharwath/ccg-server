@@ -24,7 +24,9 @@ type FormatLocale<L extends string = string, C extends string = string> = {
  */
 class Locale<L extends string = string> {
   #locales = new Map<string, LocaleData>();
+
   constructor(public readonly language: L) {}
+
   public static formatLocale<L extends string, C extends string>(
     locale: IsoLocale<L, C> | IsoLocale
   ): FormatLocale<L, C> {
@@ -72,18 +74,6 @@ class Locale<L extends string = string> {
 export default class I18N {
   #locales = new Map<string, Locale>();
   #locale: FormatLocale;
-
-  #currentLocale(locale?: IsoLocale | undefined): LocaleData {
-    const l = locale ? Locale.formatLocale(locale) : this.#locale;
-    return this.#locales.get(l.language)?.getData(l.locale) ?? {};
-  }
-
-  #addLocaleData(localeFile: LocaleFile) {
-    const {language} = Locale.formatLocale(localeFile.info.locale);
-    if (!this.#locales.has(language)) this.#locales.set(language, new Locale(language));
-    const locale = this.#locales.get(language) as Locale;
-    locale.add(localeFile);
-  }
 
   constructor(private localesPath: string, defaultLocale: IsoLocale) {
     this.#locale = Locale.formatLocale(defaultLocale);
@@ -205,5 +195,17 @@ export default class I18N {
         Log.info(`No missing keys for locale "${locale[0]}"`);
       }
     });
+  }
+
+  #currentLocale(locale?: IsoLocale | undefined): LocaleData {
+    const l = locale ? Locale.formatLocale(locale) : this.#locale;
+    return this.#locales.get(l.language)?.getData(l.locale) ?? {};
+  }
+
+  #addLocaleData(localeFile: LocaleFile) {
+    const {language} = Locale.formatLocale(localeFile.info.locale);
+    if (!this.#locales.has(language)) this.#locales.set(language, new Locale(language));
+    const locale = this.#locales.get(language) as Locale;
+    locale.add(localeFile);
   }
 }

@@ -1,7 +1,7 @@
 import Deck from '@core/deck/Deck';
 import Hand from '@core/hand/Hand';
 import Target from '@core/Target';
-import Game, {GameContext} from '@core/Game';
+import Game from '@core/Game';
 import Card from '@core/cards/Card';
 import {EmptyDeckError, HandFullError, UnknownCardError} from '@core/error/errors';
 import MinionCard from '@core/cards/MinionCard';
@@ -16,13 +16,13 @@ export default class Hero extends Target {
   public attack = 0;
   public mana = 0;
 
-  get board(): Board | undefined {
-    return this.game?.boards.get(this);
-  }
-
   constructor(game?: Game) {
     super(game);
     this.deck = new Deck();
+  }
+
+  get board(): Board | undefined {
+    return this.game?.boards.get(this);
   }
 
   /**
@@ -57,15 +57,6 @@ export default class Hero extends Target {
     }
   }
 
-  #addMinion(card: MinionCard, position = 0): boolean {
-    if (!this.game) return false;
-    const minion = new Minion(card, this);
-    minion.getCard().onUse(minion.context);
-    this.board?.pushAt(position, minion);
-    this.game.emit('minionAdded', minion);
-    return true;
-  }
-
   override hurt(amount: number) {
     super.hurt(amount);
     this.game?.emit('heroHurt', this);
@@ -74,5 +65,14 @@ export default class Hero extends Target {
   override die() {
     super.die();
     this.game?.emit('heroDied', this);
+  }
+
+  #addMinion(card: MinionCard, position = 0): boolean {
+    if (!this.game) return false;
+    const minion = new Minion(card, this);
+    minion.getCard().onUse(minion.context);
+    this.board?.pushAt(position, minion);
+    this.game.emit('minionAdded', minion);
+    return true;
   }
 }

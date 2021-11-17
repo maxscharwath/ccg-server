@@ -1,3 +1,4 @@
+import LeakDetector from 'jest-leak-detector';
 import Game from '../src/core/Game';
 import {EmptyDeckError} from '../src/core/error/errors';
 import {ok} from 'assert';
@@ -69,6 +70,39 @@ describe('Test Game', () => {
       expect(minion?.health).toBe(9);
       expect(spy).toHaveBeenCalledTimes(1);
       game.end();
+    });
+    it('should not leak', async () => {
+      const spy = jest.fn();
+      let game: Game | null = new Game();
+      const cardManager = new CardManager();
+      cardManager.addCard(
+        class TestCard extends MinionCard {
+          public id = 1;
+          public attack = 8;
+          public cost = 9;
+          public health = 8;
+          public tag = 'test-card';
+          public rarity = CardRarity.LEGENDARY;
+
+          override onUse(context: MinionGameContext) {
+            super.onUse(context);
+            spy();
+          }
+        }
+      );
+      const detector = new LeakDetector(game);
+      game.on('minionAdded', minion => {
+        expect(minion).toBe(game?.currentHero.board?.at(0));
+        spy();
+      });
+      game.currentHero.hand.pushAt(0, cardManager.getMutableCardById(1));
+      game.currentHero.playCard(game.currentHero.hand.at<MinionCard>(0), {
+        position: 0,
+      });
+      game.end();
+      game = null;
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(await detector.isLeaking()).toBe(false);
     });
   });
 });

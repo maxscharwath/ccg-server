@@ -20,12 +20,14 @@ describe('CardManager', () => {
   test('should add Card', async () => {
     const cardManager = new CardManager();
     expect(cardManager.countCards()).toBe(0);
+
     class TestSpellCard extends SpellCard {
       public cost = 2;
       public id = 1;
       public tag = 'test_card';
       public rarity = CardRarity.RARE;
     }
+
     const card = cardManager.addCard(TestSpellCard);
     expect(card).toBeInstanceOf(Card);
     expect(card).toBeInstanceOf(TestSpellCard);

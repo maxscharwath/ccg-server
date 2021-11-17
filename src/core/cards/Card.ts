@@ -1,6 +1,7 @@
 import * as crypto from 'crypto';
 
 export type CardId = number;
+
 export enum CardRarity {
   COMMON,
   RARE,

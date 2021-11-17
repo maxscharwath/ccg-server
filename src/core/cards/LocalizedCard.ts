@@ -1,5 +1,6 @@
 import I18N from '@core/misc/I18N';
 import Card from '@core/cards/Card';
+
 export type LocalizedCard<T extends Card> = T & {name: string; text: string};
 
 /**

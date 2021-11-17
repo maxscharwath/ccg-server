@@ -13,9 +13,18 @@ import Serializer from './Serializer';
  * Logger class
  */
 export default class Logger {
+  /**
+   * Some default transports.
+   */
+  public static TRANSPORTS = {
+    DATED_LOG,
+    NAMED_LOG,
+    CONSOLE_LOG,
+    SIMULATE_LAG,
+  };
+  public logHistory: LogData[] = [];
   readonly #options: Options;
   #prevLogTransports: Promise<void>[] = [];
-  public logHistory: LogData[] = [];
 
   constructor(options: Partial<Options> = {}) {
     this.#options = {
@@ -28,16 +37,6 @@ export default class Logger {
       ...options,
     };
   }
-
-  /**
-   * Some default transports.
-   */
-  public static TRANSPORTS = {
-    DATED_LOG,
-    NAMED_LOG,
-    CONSOLE_LOG,
-    SIMULATE_LAG,
-  };
 
   private static getStackLog(index = 0): Stack | undefined {
     const stackReg = /at\s+(.*)\s+\((.*):(\d*):(\d*)\)/i;
@@ -112,7 +111,10 @@ export default class Logger {
           .finally(() => clearTimeout(timeout));
       });
     });
-    const logData = {...data, done: Promise.allSettled(this.#prevLogTransports).then(() => {})};
+    const logData = {
+      ...data,
+      done: Promise.allSettled(this.#prevLogTransports).then(() => {}),
+    };
     this.logHistory = [logData, ...this.logHistory].slice(0, this.#options.logHistory);
     return logData;
   }

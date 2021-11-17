@@ -24,18 +24,24 @@ type GameEvents = {
 
 export class GameContext extends SubEventEmitter<GameEvents> {
   public readonly hero: Hero;
+  #game: Game;
+
+  protected constructor(game: Game, hero: Hero) {
+    super(game);
+    this.#game = game;
+    this.hero = hero;
+  }
 
   get board(): Board {
     return <Board>this.hero.board;
   }
 
-  protected constructor(game: Game, hero: Hero) {
-    super(game);
-    this.hero = hero;
-  }
-
   static create<O extends Object>(game: Game, hero: Hero, options?: O): GameContext & O {
     return Object.assign(new GameContext(game, hero), options);
+  }
+
+  public isGame(game: Game): boolean {
+    return this.#game === game;
   }
 }
 
@@ -69,7 +75,25 @@ export default class Game extends EventEmitter<GameEvents> {
   public end() {
     this.emit('end');
     clearTimeout(this.#turnTimer);
-    this.removeAllListeners();
+    this.removeAllChildrenListeners();
+  }
+
+  /**
+   * Skip the current turn.
+   */
+  public skipTurn(): Promise<void> {
+    return new Promise<void>(resolve => {
+      setImmediate(async () => {
+        this.emit('skipTurn', this.currentHero);
+        await this.#nextTurn();
+        resolve();
+      });
+    });
+  }
+
+  public castSpell(card: SpellCard, target?: Target): boolean {
+    //todo : Probably not the best way to do this.
+    return card.onCast(GameContext.create(this, this.currentHero, {target}));
   }
 
   #onMain() {
@@ -89,23 +113,5 @@ export default class Game extends EventEmitter<GameEvents> {
       this.emit('round', this.round);
     }
     this.#onTurn(this.currentHero);
-  }
-
-  /**
-   * Skip the current turn.
-   */
-  public skipTurn(): Promise<void> {
-    return new Promise<void>(resolve => {
-      setImmediate(async () => {
-        this.emit('skipTurn', this.currentHero);
-        await this.#nextTurn();
-        resolve();
-      });
-    });
-  }
-
-  public castSpell(card: SpellCard, target?: Target): boolean {
-    //todo : Probably not the best way to do this.
-    return card.onCast(GameContext.create(this, this.currentHero, {target}));
   }
 }

@@ -24,6 +24,7 @@ export class TheCoinCard extends SpellCard {
   public tag = 'the_coin';
   public rarity = CardRarity.COMMON;
 }
+
 export class PoisonCard extends SpellCard {
   public id = 3;
   public cost = 2;

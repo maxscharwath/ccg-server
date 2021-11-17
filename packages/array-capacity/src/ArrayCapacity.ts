@@ -112,7 +112,7 @@ export default class ArrayCapacity<T> extends Array<T> {
    * @param index The index to getData.
    * @returns The element at the specified index.
    */
-  public at(index: number): T {
+  public override at(index: number): T {
     if (index < 0) index = this.length + index;
     if (index < 0 || index >= this.capacity) throw new RangeError(`${index} is out the capacity of ${this.capacity}`);
     return this[index];
