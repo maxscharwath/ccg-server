@@ -1,5 +1,3 @@
-import {WebSocketServer} from 'ws';
-import {Socket} from 'net';
 import * as http from 'http';
 import {match, pathToRegexp} from 'path-to-regexp';
 import {Request} from './Request';
@@ -9,7 +7,6 @@ type Handler = (req: Request, res: Response) => Promise<unknown> | unknown;
 type Middleware = (req: Request, res: Response, next: (value?: unknown) => void) => Promise<void> | void;
 type Route = {method: string; path: string; middleware: Middleware};
 export default class Server extends http.Server {
-  public ws: WebSocketServer;
   #middlewares: Middleware[] = [];
   #routes: Route[] = [];
 
@@ -21,12 +18,6 @@ export default class Server extends http.Server {
       },
       (req, res) => this.#requestListener(req as Request, res as Response)
     );
-    this.ws = new WebSocketServer({noServer: true});
-    this.on('upgrade', (req: Request, socket: Socket, head: Buffer) => {
-      this.ws.handleUpgrade(req, socket, head, ws => {
-        this.ws.emit('connection', ws, req);
-      });
-    });
   }
 
   public getRoutes(method?: string) {

@@ -46,3 +46,24 @@ export class HealthBoostCard extends SpellCard {
   public tag = 'health_boost';
   public rarity = CardRarity.COMMON;
 }
+
+export class GreatEaterCard extends MinionCard {
+  public id = 5;
+  public attack = 3;
+  public cost = 8;
+  public health = 5;
+  public tag = 'great_eater';
+  public rarity = CardRarity.RARE;
+
+  override onUse(context: MinionGameContext) {
+    context.on('endTurn', (turn, hero) => {
+      if (hero !== context.hero) return;
+      const minion = context.opponent.board?.getRandom();
+      if (minion) {
+        context.minion.health = minion.health;
+        context.minion.attack = minion.attack;
+        minion.die();
+      }
+    });
+  }
+}

@@ -12,8 +12,6 @@ type ModifierFunction = (modifier: Modifier) => Partial<Modifier>;
  * Class Minion represent a Minion in the board
  */
 export default class Minion extends Target {
-  public health: number;
-  public attack: number;
   readonly #card: MinionCard;
   #modifiers: ModifierFunction[] = [];
   readonly #hero?: Hero;
@@ -21,10 +19,23 @@ export default class Minion extends Target {
 
   constructor(card: MinionCard, hero?: Hero) {
     super(hero?.game);
+    if (card.isReadonly()) card = card.clone();
     this.#card = card;
     this.#hero = hero;
-    this.health = card.health;
-    this.attack = card.attack;
+  }
+
+  get health() {
+    return this.#card.health;
+  }
+  set health(value) {
+    this.#card.health = value;
+  }
+
+  get attack() {
+    return this.#card.attack;
+  }
+  set attack(value) {
+    this.#card.attack = value;
   }
 
   public get context(): MinionGameContext {
@@ -75,12 +86,14 @@ export default class Minion extends Target {
   public override die() {
     super.die();
     this.game?.emit('minionDied', this);
+    this.remove();
   }
 
   /**
    * Call remove when minion is removed from the board
    */
   public remove() {
+    this.#hero?.board?.remove(this);
     this.#context?.unlink();
   }
 }

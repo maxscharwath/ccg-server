@@ -5,6 +5,7 @@ import Game from '@core/Game';
 import {Log} from '@studimax/logger';
 import localizeCard from '@core/cards/LocalizedCard';
 import {BodyParser} from '@studimax/server/src/Server';
+import Lobby from '@core/Lobby';
 
 (async () => {
   const i18n = new I18N('./locales/', 'fr-fr');
@@ -15,20 +16,12 @@ import {BodyParser} from '@studimax/server/src/Server';
   const cardManager = new CardManager();
   await cardManager.load();
   const server = new Server();
+  const lobby = new Lobby(server);
   server
     .use(BodyParser)
     .get('/routes/:method?', ({params}) => server.getRoutes(params.method).map(({method, path}) => ({method, path})))
     .get('/', () => cardManager.getCards().map(card => localizeCard(card, i18n)))
-    .get('/log', () => Log.logHistory.map((log, i) => `[${i}]\t${log.output}`).join('\n'));
-
-  const game = new Game();
-  game.on('*', (event, params) => {
-    Log.info(event, params);
-    server.ws.clients.forEach(client => {
-      client.send(JSON.stringify({event, params}));
-    });
-  });
-
-  game.start();
+    .get('/log', () => Log.logHistory.map((log, i) => `[${i}]\t${log.output}`).join('\n'))
+    .get('/lobby', () => lobby.getRooms());
   await server.listen(8080);
 })();

@@ -3,7 +3,7 @@ import Hand from '@core/hand/Hand';
 import Target from '@core/Target';
 import Game from '@core/Game';
 import Card from '@core/cards/Card';
-import {EmptyDeckError, HandFullError, UnknownCardError} from '@core/error/errors';
+import {EmptyDeckError, HandFullError, MinionNotAttachedToGameError, UnknownCardError} from '@core/error/errors';
 import MinionCard from '@core/cards/MinionCard';
 import SpellCard from '@core/cards/SpellCard';
 import Board from '@core/Board';
@@ -68,11 +68,17 @@ export default class Hero extends Target {
     return this.mana >= card.cost;
   }
 
+  public isMyTurn(): boolean {
+    return this.game?.currentHero === this;
+  }
+
   public playCard(card: MinionCard, options: {position: number}): boolean;
   public playCard(card: SpellCard, options: {target: Target}): boolean;
   public playCard(card: Card, options: Partial<{position: number; target: Target}>): boolean {
-    if (!this.hand.hasCard(card) || !this.game) return false;
-    if (!this.canPlayCard(card)) return false;
+    if (!this.game) return false;
+    //if (!this.hand.hasCard(card)) return false;
+    //if (!this.isMyTurn()) return false;
+    //if (!this.canPlayCard(card)) return false;
     this.mana -= card.cost;
     this.game.emit('cardPlayed', card, this);
     switch (card.type) {

@@ -11,6 +11,7 @@ type GameEvents = {
   start: () => void;
   end: () => void;
   turn: (turn: number, hero: Hero) => void;
+  endTurn: (turn: number, hero: Hero) => void;
   round: (round: number) => void;
   skipTurn: (hero: Hero) => void;
   cardPlayed: (card: Card, hero: Hero) => void;
@@ -24,16 +25,19 @@ type GameEvents = {
 
 export class GameContext extends SubEventEmitter<GameEvents> {
   public readonly hero: Hero;
-  #game: Game;
+  public readonly opponent: Hero;
+  readonly #game: Game;
 
   protected constructor(game: Game, hero: Hero) {
     super(game);
     this.#game = game;
-    this.hero = hero;
-  }
-
-  get board(): Board {
-    return <Board>this.hero.board;
+    if (game.heroes[0] === hero) {
+      this.hero = game.heroes[0];
+      this.opponent = game.heroes[1];
+    } else {
+      this.hero = game.heroes[1];
+      this.opponent = game.heroes[0];
+    }
   }
 
   static create<O extends Object>(game: Game, hero: Hero, options?: O): GameContext & O {
@@ -47,15 +51,15 @@ export class GameContext extends SubEventEmitter<GameEvents> {
 
 export default class Game extends EventEmitter<GameEvents> {
   public turn = 0;
-  public readonly heros: [Hero, Hero];
+  public readonly heroes: [Hero, Hero];
   public readonly boards = new WeakMap<Hero, Board>();
   #turnTimer!: NodeJS.Timeout;
   #startAt = 0;
 
   constructor() {
     super();
-    this.heros = [new Hero(this), new Hero(this)];
-    this.heros.forEach(hero => this.boards.set(hero, new Board()));
+    this.heroes = [new Hero(this), new Hero(this)];
+    this.heroes.forEach(hero => this.boards.set(hero, new Board()));
   }
 
   public get round(): number {
@@ -63,7 +67,7 @@ export default class Game extends EventEmitter<GameEvents> {
   }
 
   public get currentHero(): Hero {
-    return this.heros[this.turn % 2];
+    return this.heroes[this.turn % 2];
   }
 
   public start() {
@@ -105,11 +109,11 @@ export default class Game extends EventEmitter<GameEvents> {
     clearTimeout(this.#turnTimer);
     this.#turnTimer = setTimeout(() => this.#nextTurn(), 75_000);
     hero.mana = ++hero.availableMana;
-    console.log(`hero ${hero.mana}`);
     this.emit('turn', this.turn, hero);
   }
 
   #nextTurn() {
+    this.emit('endTurn', this.turn, this.currentHero);
     this.turn++;
     if (this.turn % 2 === 0) {
       this.emit('round', this.round);

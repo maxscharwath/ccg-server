@@ -21,4 +21,15 @@ export default class Board extends ArrayCapacity<Minion> {
     const index = this.indexOf(minion);
     return index === -1 ? [] : this.getAdjacent(index);
   }
+
+  public getRandom(): Minion {
+    return this[Math.floor(Math.random() * this.length)];
+  }
+
+  public remove(minion: Minion): boolean {
+    const index = this.indexOf(minion);
+    if (index === -1) return false;
+    this.splice(index, 1);
+    return true;
+  }
 }
