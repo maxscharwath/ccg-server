@@ -1,13 +1,7 @@
 import * as crypto from 'crypto';
+import {CardRarity} from '@core/cards/CardRarity';
 
 export type CardId = number;
-
-export enum CardRarity {
-  COMMON,
-  RARE,
-  EPIC,
-  LEGENDARY,
-}
 
 /**
  * Class Card represent the base of all cards

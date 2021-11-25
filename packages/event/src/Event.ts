@@ -10,6 +10,8 @@ type EventMapImproved<T extends EventMap> = T & {
 };
 type EventKey<T extends EventMap> = string & keyof EventMapImproved<T>;
 
+type Validation<T extends EventMap, K extends EventKey<T>> = (...params: Parameters<T[K]>) => boolean;
+
 /**
  * Class EventEmitter is a full type-safe event emitter.
  * @extends EventEmitter
@@ -125,8 +127,20 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    * Adds a listener for the event.
    * @param event The name of the event.
    * @param listener The listener to add.
+   * @param validation
    */
-  public override on<K extends EventKey<T>>(event: K, listener: EventMapImproved<T>[K]): this {
+  public override on<K extends EventKey<T>>(
+    event: K,
+    listener: EventMapImproved<T>[K],
+    validation?: Validation<T, K>
+  ): this {
+    if (validation) {
+      return super.on(event, (...args) => {
+        if (validation(...(args as Parameters<T[K]>))) {
+          listener(...args);
+        }
+      });
+    }
     return super.on(event, listener);
   }
 
@@ -134,8 +148,22 @@ export class EventEmitter<T extends EventMap> extends event.EventEmitter {
    * Adds a one-time listener for the event.
    * @param event The name of the event.
    * @param listener The listener to add.
+   * @param validation
    */
-  public override once<K extends EventKey<T>>(event: K, listener: T[K]) {
+  public override once<K extends EventKey<T>>(
+    event: K,
+    listener: EventMapImproved<T>[K],
+    validation?: Validation<T, K>
+  ) {
+    if (validation) {
+      const fc = ((...args: Parameters<T[K]>) => {
+        if (validation(...args)) {
+          listener(...args);
+          this.removeListener(event, fc);
+        }
+      }) as EventMapImproved<T>[K];
+      return super.on(event, fc);
+    }
     return super.once(event, listener);
   }
 

@@ -34,9 +34,9 @@
     "@studimax/server": "1.0.0",
     "deepmerge": "^4.2.2",
     "fast-glob": "^3.2.7",
-    "yaml": "^1.10.2",
     "path-to-regexp": "^6.2.0",
-    "ws": "^8.2.3"
+    "ws": "^8.2.3",
+    "yaml": "^1.10.2"
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",

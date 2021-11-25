@@ -4,11 +4,11 @@ import {EmptyDeckError} from '../src/core/error/errors';
 import {ok} from 'assert';
 import CardManager from '../src/core/cards/CardManager';
 import MinionCard, {MinionGameContext} from '../src/core/cards/MinionCard';
-import {CardRarity} from '../src/core/cards/Card';
 import Minion from '../src/core/Minion';
+import {CardRarity} from '../src/core/cards/CardRarity';
 
 describe('Test Game', () => {
-  it('should create an instance', () => {
+  it('should from an instance', () => {
     const game = new Game();
     expect(game).toBeInstanceOf(Game);
     game.end();

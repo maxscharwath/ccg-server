@@ -12,6 +12,7 @@ import CardManager from '@core/cards/CardManager';
 
 class Room {
   private players: WebSocket[] = [];
+
   addPlayer(ws: WebSocket) {
     if (this.players.length >= 2) {
       throw new Error('Room is full');
@@ -58,6 +59,7 @@ class Room {
 
 export default class Lobby {
   public rooms = new Map<string, Room>();
+
   constructor(server: Server) {
     const wss = new WebSocketServer({noServer: true});
     server.on('upgrade', (req: Request, socket: Socket, head: Buffer) => {

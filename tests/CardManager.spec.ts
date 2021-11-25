@@ -1,7 +1,8 @@
-import Card, {CardRarity} from '../src/core/cards/Card';
+import Card from '../src/core/cards/Card';
 import MinionCard from '../src/core/cards/MinionCard';
 import SpellCard from '../src/core/cards/SpellCard';
 import CardManager from '../src/core/cards/CardManager';
+import {CardRarity} from '../src/core/cards/CardRarity';
 
 describe('CardManager', () => {
   test('should be a class', () => {

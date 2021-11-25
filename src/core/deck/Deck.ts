@@ -1,6 +1,7 @@
-import Card, {CardRarity} from '@core/cards/Card';
+import Card from '@core/cards/Card';
 import ArrayCapacity from '@studimax/array-capacity';
 import {InvalidDeckError} from '@core/error/errors';
+import {CardRarity} from '@core/cards/CardRarity';
 
 /**
  * Class Deck represent a Stack of Cards

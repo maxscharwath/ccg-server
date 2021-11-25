@@ -27,6 +27,7 @@ export default class Minion extends Target {
   get health() {
     return this.#card.health;
   }
+
   set health(value) {
     this.#card.health = value;
   }
@@ -34,6 +35,7 @@ export default class Minion extends Target {
   get attack() {
     return this.#card.attack;
   }
+
   set attack(value) {
     this.#card.attack = value;
   }

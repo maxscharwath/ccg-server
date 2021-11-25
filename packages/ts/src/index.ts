@@ -4,7 +4,7 @@ export type Options = {
 };
 
 /**
- * Template strings are a way to create a string from multiple values.
+ * Template strings are a way to from a string from multiple values.
  * @param template The template string.
  * @param data The data to use in the template.
  * @param options The options to use when transforming the data.

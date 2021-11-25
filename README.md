@@ -1,5 +1,8 @@
 # ccg-server
 ![example workflow](https://github.com/maxscharwath/ccg-server/actions/workflows/actions_node.yml/badge.svg)
+[![Code Style: Google](https://img.shields.io/badge/code%20style-google-blueviolet.svg?logo=google&logoColor=white)](https://github.com/google/gts)
+[![Code: TypeScript](https://img.shields.io/badge/made%20with-typescript-blue.svg?logo=typescript&logoColor=white)](https://github.com/microsoft/TypeScript)
+[![Made By: StudiMax](https://img.shields.io/badge/made%20by-studimax-red.svg)](https://github.com/studimax)
 
 A multiplayer collectible card game server
 

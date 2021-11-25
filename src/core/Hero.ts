@@ -3,7 +3,7 @@ import Hand from '@core/hand/Hand';
 import Target from '@core/Target';
 import Game from '@core/Game';
 import Card from '@core/cards/Card';
-import {EmptyDeckError, HandFullError, MinionNotAttachedToGameError, UnknownCardError} from '@core/error/errors';
+import {EmptyDeckError, HandFullError, UnknownCardError} from '@core/error/errors';
 import MinionCard from '@core/cards/MinionCard';
 import SpellCard from '@core/cards/SpellCard';
 import Board from '@core/Board';
@@ -17,6 +17,11 @@ export default class Hero extends Target {
   #maxMana = 10;
   #mana = 0;
   #availableMana = 0;
+
+  constructor(game?: Game) {
+    super(game);
+    this.deck = new Deck();
+  }
 
   public get mana(): number {
     return this.#mana;
@@ -36,11 +41,6 @@ export default class Hero extends Target {
 
   public set availableMana(value: number) {
     this.#availableMana = Math.min(Math.max(value, 0), this.#maxMana);
-  }
-
-  constructor(game?: Game) {
-    super(game);
-    this.deck = new Deck();
   }
 
   get board(): Board | undefined {

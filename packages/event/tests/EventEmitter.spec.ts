@@ -25,6 +25,30 @@ describe('EventEmitter test', () => {
     emitter.emit('test');
     expect(spy).toHaveBeenCalledTimes(0);
   });
+  it('should emit only is validation with on', () => {
+    const emitter = new EventEmitter();
+    const spy = jest.fn();
+    let i = 0;
+    emitter.on('test', spy, () => ++i >= 2);
+    emitter.emit('test');
+    expect(spy).toHaveBeenCalledTimes(0);
+    emitter.emit('test');
+    expect(spy).toHaveBeenCalledTimes(1);
+    emitter.emit('test');
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+  it('should emit only is validation with once', () => {
+    const emitter = new EventEmitter();
+    const spy = jest.fn();
+    let i = 0;
+    emitter.once('test', spy, () => ++i >= 2);
+    emitter.emit('test');
+    expect(spy).toHaveBeenCalledTimes(0);
+    emitter.emit('test');
+    expect(spy).toHaveBeenCalledTimes(1);
+    emitter.emit('test');
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
   describe('Sub EventEmitter tests', () => {
     it('should on be called', () => {
       const emitter = new EventEmitter();

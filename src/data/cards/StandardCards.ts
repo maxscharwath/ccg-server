@@ -1,6 +1,6 @@
 import MinionCard, {MinionGameContext} from '@core/cards/MinionCard';
 import SpellCard, {SpellGameContext} from '@core/cards/SpellCard';
-import {CardRarity} from '@core/cards/Card';
+import {CardRarity} from '@core/cards/CardRarity';
 
 export class KingKrushCard extends MinionCard {
   public id = 1;
@@ -56,14 +56,16 @@ export class GreatEaterCard extends MinionCard {
   public rarity = CardRarity.RARE;
 
   override onUse(context: MinionGameContext) {
-    context.on('endTurn', (turn, hero) => {
-      if (hero !== context.hero) return;
-      const minion = context.opponent.board?.getRandom();
-      if (minion) {
+    context.on(
+      'endTurn',
+      () => {
+        const minion = context.opponent.board?.getRandom();
+        if (!minion) return;
         context.minion.health = minion.health;
         context.minion.attack = minion.attack;
         minion.die();
-      }
-    });
+      },
+      (turn, hero) => hero === context.hero
+    );
   }
 }
