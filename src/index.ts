@@ -5,8 +5,8 @@ import {Log} from '@studimax/logger';
 import localizeCard from '@core/cards/LocalizedCard';
 import {BodyParser} from '@studimax/server/src/Server';
 import Lobby from '@core/Lobby';
-import Booster from '@core/Booster';
 import * as crypto from 'crypto';
+import Booster from '@core/booster/Booster';
 
 (async () => {
   const i18n = new I18N('./locales/', 'fr-fr');

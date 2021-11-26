@@ -1,13 +1,15 @@
 import ArrayCapacity from '@studimax/array-capacity';
 import Card from '@core/cards/Card';
 import CardManager from '@core/cards/CardManager';
-import RNG, {Seed} from '@core/RNG';
+import RNG, {Seed} from '@core/misc/RNG';
 import {createHash} from 'crypto';
+
 export default class Booster {
   public hash!: string;
   public seed!: string;
-  readonly #seed: number | string;
   public readonly cards: Readonly<ArrayCapacity<Card>>;
+  readonly #seed: number | string;
+
   constructor(seed: number | string, cardManager: CardManager) {
     this.#seed = Seed.from(seed);
     this.cards = this.#generate(cardManager);
