@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@studimax/ts": "1.0.0",
+    "chalk": "4.1.2",
     "fecha": "^4.2.1"
   },
   "engines": {

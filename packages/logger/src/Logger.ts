@@ -1,44 +1,73 @@
 import * as path from 'path';
 import {format} from 'fecha';
-import {LogData, Metadata, Options, Stack} from './types';
+import {LogData, LogLevelNamed, Metadata, Options, Stack} from './types';
+import ts from '@studimax/ts';
+import Serializer from './Serializer';
 import DATED_LOG from './transports/DatedLogTransport';
 import NAMED_LOG from './transports/NamedLogTransport';
 import CONSOLE_LOG from './transports/ConsoleLogTransport';
 import SIMULATE_LAG from './transports/SimulateLogTransport';
-import ts from '@studimax/ts';
-import Serializer from './Serializer';
 
+const defaultLogLevels = {
+  trace: {
+    level: 0,
+    color: '#0099ff',
+  },
+  debug: {
+    level: 1,
+    color: '#00cc99',
+  },
+  info: {
+    level: 2,
+    color: '#00cc30',
+  },
+  warn: {
+    level: 3,
+    color: '#ffcc00',
+  },
+  error: {
+    level: 4,
+    color: '#ff0000',
+  },
+  fatal: {
+    level: 5,
+    color: '#ff0000',
+  },
+};
+
+type LoggerType<L extends string = never> = Readonly<CoreLogger<L>> & {
+  [key in keyof typeof defaultLogLevels | L]: (message: string, metadata?: Metadata) => LogData;
+};
 /**
  * @internal
- * Logger class
+ * CoreLogger is a simple logging utility that can be used to log messages to multiple transports.
+ * @author Maxime Scharwath
  */
-export default class Logger {
-  /**
-   * Some default transports.
-   */
-  public static TRANSPORTS = {
-    DATED_LOG,
-    NAMED_LOG,
-    CONSOLE_LOG,
-    SIMULATE_LAG,
-  };
+export class CoreLogger<L extends string = never> {
   public logHistory: LogData[] = [];
-  readonly #options: Options;
+  readonly #options: Options<keyof typeof defaultLogLevels>;
   #prevLogTransports: Promise<void>[] = [];
+  #level = 0;
 
-  constructor(options: Partial<Options> = {}) {
+  constructor(options: Partial<Options<keyof typeof defaultLogLevels | L>> = {}) {
     this.#options = {
-      format: '{timestamp}\t<{level}>\t{file}:{line}\t({method})\t{message} {metadata}',
+      format: '{timestamp}\t<{level.name}>\t{file}:{line}\t({method})\t{message} {metadata}',
       dateFormat: 'YYYY-MM-DD HH:mm:ss.SS',
       logFolder: 'logs',
       logHistory: 100,
       transports: [],
       transportTimeout: 1000,
       ...options,
+      levels: {...defaultLogLevels, ...(options?.levels ?? {})},
     };
   }
 
-  private static getStackLog(index = 0): Stack | undefined {
+  /**
+   * Detect stack trace and return a stack object.
+   * @param index {number} The index of the stack trace to use.
+   * @private
+   */
+  static #getStackLog(index = 0): Stack | undefined {
     const stackReg = /at\s+(.*)\s+\((.*):(\d*):(\d*)\)/i;
     const stackReg2 = /at\s+()(.*):(\d*):(\d*)/i;
     const stackList = new Error().stack?.split('\n').slice(3);
@@ -57,28 +86,16 @@ export default class Logger {
     } as Stack;
   }
 
-  public log(level: string, message: string, metadata?: Metadata): LogData {
-    return this.#logMain(level, message, metadata);
-  }
-
-  public debug(message: string, metadata?: Metadata): LogData {
-    return this.#logMain('debug', message, metadata);
-  }
-
-  public info(message: string, metadata?: Metadata): LogData {
-    return this.#logMain('info', message, metadata);
-  }
-
-  public warn(message: string, metadata?: Metadata): LogData {
-    return this.#logMain('warn', message, metadata);
-  }
-
-  public error(message: string, metadata?: Metadata): LogData {
-    return this.#logMain('error', message, metadata);
-  }
-
-  #logMain(level: string, message: string, metadata?: Metadata): LogData {
-    const stack = Logger.getStackLog(1);
+  /**
+   * Base log method.
+   * @remarks it used to always have the same stack index.
+   * @param level {string} The level of the log.
+   * @param message {string} The message to log.
+   * @param metadata {Metadata} The metadata to log.
+   * @private
+   */
+  #logMain(level: LogLevelNamed, message: string, metadata?: Metadata): LogData {
+    const stack = CoreLogger.#getStackLog(1);
     const date = new Date();
     const output = ts(this.#options.format, {
       ...stack,
@@ -100,7 +117,7 @@ export default class Logger {
     this.#prevLogTransports = this.#options.transports.map((transport, index) => {
       const ready = Promise.allSettled(this.#prevLogTransports).then(() => {});
       const transportReady = this.#prevLogTransports[index];
-      const t = transport(data, {...this.#options, ready, transportReady});
+      const t = transport(data, {...this.#options, ready, transportReady, level: this.#level});
       return new Promise((resolve, reject) => {
         if (!(t instanceof Promise)) return resolve();
         const timeout = setTimeout(() => {
@@ -118,4 +135,66 @@ export default class Logger {
     this.logHistory = [logData, ...this.logHistory].slice(0, this.#options.logHistory);
     return logData;
   }
+
+  /**
+   * Returns a log function for desired level.
+   * @param level {string} The level of the log.
+   */
+  public logger(level: keyof typeof defaultLogLevels & keyof L): (message: string, metadata?: Metadata) => LogData {
+    const logLevelNamed: LogLevelNamed = {
+      level: 0,
+      color: '#0000ff',
+      ...(this.#options.levels[level] ?? {}),
+      name: level,
+    };
+    return (message: string, metadata?: Metadata) => this.#logMain(logLevelNamed, message, metadata);
+  }
+
+  /**
+   * Get all levels available.
+   */
+  public getLevels(): string[] {
+    return Object.keys(this.#options.levels);
+  }
+
+  /**
+   * Set minimum log level to be emitted.
+   * @param level {string} The level to set.
+   */
+  public setLevel(level: number) {
+    this.#level = level;
+  }
 }
+
+/**
+ * Logger is a simple logging utility that can be used to log messages to multiple transports.
+ * @remarks it uses the CoreLogger class. And Proxy under the hood.
+ * @author Maxime Scharwath
+ */
+export default function Logger<L extends string = never>(
+  options: Partial<Options<keyof typeof defaultLogLevels | L>> = {}
+): LoggerType<L> {
+  const logger = new CoreLogger(options);
+  return new Proxy(
+    {},
+    {
+      get: (target, prop) => {
+        if (typeof prop === 'string' && !(prop in logger)) {
+          return logger.logger(prop as never);
+        }
+        const value = logger[prop as keyof CoreLogger<L>];
+        if (typeof value === 'function') {
+          return value.bind(logger);
+        }
+        return value;
+      },
+    }
+  ) as never;
+}
+
+Logger.TRANSPORTS = {
+  DATED_LOG,
+  NAMED_LOG,
+  CONSOLE_LOG,
+  SIMULATE_LAG,
+};

@@ -1,4 +1,5 @@
-import {Data, Transport} from '../types';
+import * as chalk from 'chalk';
+import {Transport} from '../types';
 
 /**
  * @internal
@@ -6,9 +7,11 @@ import {Data, Transport} from '../types';
  * @constructor
  */
 export default function CONSOLE_LOG(): Transport {
-  return function CONSOLE_LOG(data: Data) {
-    if (data.level === 'warn') console.warn(data.output);
-    else if (data.level === 'error') console.error(data.output);
-    else console.log(data.output);
+  return function CONSOLE_LOG(data, options) {
+    if (data.level.level < options.level) return;
+    const color = chalk.hex(data.level.color);
+    if (data.level.name === 'warn') console.warn(color(data.output));
+    else if (data.level.name === 'error') console.error(color(data.output));
+    else console.log(color(data.output));
   };
 }

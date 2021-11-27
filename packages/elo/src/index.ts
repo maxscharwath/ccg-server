@@ -3,6 +3,10 @@ type Options = {
   kFactor: number;
 };
 
+/**
+ * Elo rating system
+ * @author Maxime Scharwath
+ */
 export default class Elo {
   static #PERF = 400;
   readonly #kFactor: number;
@@ -13,10 +17,16 @@ export default class Elo {
     this.#initialRating = options.initialRating ?? 1000;
   }
 
+  /**
+   * Get initial rating
+   */
   public getInitialRating(): number {
     return this.#initialRating;
   }
 
+  /**
+   * Get K-factor
+   */
   public getKFactor(): number {
     return this.#kFactor;
   }

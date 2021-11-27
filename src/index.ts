@@ -7,7 +7,6 @@ import {BodyParser} from '@studimax/server/src/Server';
 import Lobby from '@core/Lobby';
 import * as crypto from 'crypto';
 import Booster from '@core/booster/Booster';
-
 (async () => {
   const i18n = new I18N('./locales/', 'fr-fr');
   await i18n.load();

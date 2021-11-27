@@ -10,7 +10,7 @@ export type Stack = {
 };
 export type Data = {
   stack?: Stack;
-  level: string;
+  level: LogLevelNamed;
   message: string;
   metadata: Metadata;
   output: string;
@@ -30,9 +30,23 @@ export type TransportOptions = Options & {
    * Resolve when the same previous logs transport has been resolved.
    */
   transportReady: Promise<void>;
+  level: number;
 };
 
-export type Options = {
+export type LogLevel = {
+  level: number;
+  color: string;
+};
+
+export type LogLevelNamed = LogLevel & {
+  name: string;
+};
+
+export type LogLevels<L extends string> = {
+  [level in L]: LogLevel;
+};
+
+export type Options<L extends string = string> = {
   transportTimeout: number;
   name?: string;
   format: string;
@@ -40,4 +54,5 @@ export type Options = {
   logFolder: string;
   logHistory: number;
   transports: Transport[];
+  levels: Partial<LogLevels<L>>;
 };
