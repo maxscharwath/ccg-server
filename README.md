@@ -4,7 +4,7 @@
 [![Code: TypeScript](https://img.shields.io/badge/made%20with-typescript-blue.svg?logo=typescript&logoColor=white)](https://github.com/microsoft/TypeScript)
 [![Made By: StudiMax](https://img.shields.io/badge/made%20by-studimax-red.svg)](https://github.com/studimax)
 
-A multiplayer collectible card game server
+## A multiplayer collectible card game server
 
 The goal of this project is to create a collectible card game largely inspired by *Hearthstone*.
 The interesting points of this project are:
@@ -15,3 +15,18 @@ The interesting points of this project are:
 - How to earn cards and share them, maybe use a blockchain?
 
 This project is a technical demonstration of my skills in developing a large project in a programming language that I really appreciate.
+
+## Project Structure
+For this project the usage of monorepo using npm/yarn workspaces (see https://docs.npmjs.com/cli/v7/using-npm/workspaces)
+```
+root/
+├─ packages/
+│  ├─ first-module/
+│  │  ├─ package.json
+│  ├─ second-module/
+│  │  ├─ package.json
+├─ src/
+├─ package.json
+```
+for this project all intern module use the prefix ``@studimax`` for example ``@studimax\my-module``
+Don't forget to test as much as possible all features with ``Jest``
